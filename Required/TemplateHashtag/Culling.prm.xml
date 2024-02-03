@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<Culling.prm.xml>
+
+  <ActivationCulling>
+    <Category>
+      <Basic>
+        <Param>
+          <s_BaseRange>1</s_BaseRange>
+          <s_bFixedCullingRefPosition>false</s_bFixedCullingRefPosition>
+        </Param>
+      </Basic>
+    </Category>
+  </ActivationCulling>
+
+  <VisibilityCulling>
+    <Category>
+      <Basic>
+        <Param>
+          <g_ExecCulling>false</g_ExecCulling>
+          <g_FrustumFarDistance>1000</g_FrustumFarDistance>
+          <g_IsDebugMode>false</g_IsDebugMode>
+          <g_IsFixedView>false</g_IsFixedView>
+          <g_RadiusLimit1>320</g_RadiusLimit1>
+          <g_RadiusLimit2>40</g_RadiusLimit2>
+          <g_Range>1</g_Range>
+          <g_SetMargin>3</g_SetMargin>
+        </Param>
+      </Basic>
+    </Category>
+  </VisibilityCulling>
+
+</Culling.prm.xml>

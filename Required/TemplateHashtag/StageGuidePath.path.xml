@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<SonicPath>
+
+  <library type="GEOMETRY">
+    <geometry id="StageGuidePath-geometry" name="StageGuidePath-geometry">
+      <spline count="1" width="0">
+        <spline3d count="35">
+          <knot type="corner">
+            <invec>-692.558 0 275.45</invec>
+            <outvec>-603.318 0 277.08</outvec>
+            <point>-692.558 0 275.45</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>-514.078 0 278.71</invec>
+            <outvec>-401.859 0 279.757</outvec>
+            <point>-457.969 0 279.234</point>
+          </knot>
+          <knot type="bezier">
+            <invec>-398.741 -15.6064 279.175</invec>
+            <outvec>-349.849 -15.6064 270.794</outvec>
+            <point>-382.443 -15.6064 276.382</point>
+          </knot>
+          <knot type="bezier">
+            <invec>-325.636 -15.8391 251.237</invec>
+            <outvec>-317.487 -15.8391 237.268</outvec>
+            <point>-319.117 -15.8391 240.062</point>
+          </knot>
+          <knot type="bezier">
+            <invec>-308.465 -23.4993 184.229</invec>
+            <outvec>-283.234 -50.829 132.107</outvec>
+            <point>-295.849 -37.1642 158.168</point>
+          </knot>
+          <knot type="bezier">
+            <invec>-267.024 -9.89942 132.539</invec>
+            <outvec>-219.005 -3.95977 6.11851</outvec>
+            <point>-251.017 -7.91954 90.3988</point>
+          </knot>
+          <knot type="bezier">
+            <invec>-187.807 -7.76215 -102.647</invec>
+            <outvec>-187.807 -7.76215 -102.647</outvec>
+            <point>-187.807 -7.76215 -102.647</point>
+          </knot>
+          <knot type="bezier">
+            <invec>-159.461 -18.6741 -132.448</invec>
+            <outvec>-88.218 -18.6741 -135.242</outvec>
+            <point>-111.966 -18.6741 -134.31</point>
+          </knot>
+          <knot type="bezier">
+            <invec>-55.0127 -6.44021 -136.406</invec>
+            <outvec>175.012 0.818626 -137.57</outvec>
+            <point>59.9997 -2.81079 -136.988</point>
+          </knot>
+          <knot type="bezier">
+            <invec>350.004 -0.073761 -137.57</invec>
+            <outvec>368.164 -0.073761 -133.379</outvec>
+            <point>356.057 -0.073761 -136.173</point>
+          </knot>
+          <knot type="bezier">
+            <invec>392.377 -0.073761 -124.998</invec>
+            <outvec>418.453 -0.073761 -124.998</outvec>
+            <point>405.415 -0.073761 -124.998</point>
+          </knot>
+          <knot type="bezier">
+            <invec>447.322 -0.073761 -143.623</invec>
+            <outvec>458.497 -0.073761 -152.936</outvec>
+            <point>452.91 -0.073761 -148.28</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>481.348 -11.0237 -147.179</invec>
+            <outvec>509.327 -11.0237 -138.807</outvec>
+            <point>502.767 -11.0237 -143.453</point>
+          </knot>
+          <knot type="bezier">
+            <invec>517.319 -11.0237 -132.128</invec>
+            <outvec>545.745 -11.0237 -132.128</outvec>
+            <point>531.532 -11.0237 -132.128</point>
+          </knot>
+          <knot type="bezier">
+            <invec>557.256 2.12428 -138.688</invec>
+            <outvec>597.708 2.12428 -138.688</outvec>
+            <point>577.482 2.12428 -138.688</point>
+          </knot>
+          <knot type="bezier">
+            <invec>718.488 -29.4568 -131.581</invec>
+            <outvec>748.008 -29.4568 -140.328</outvec>
+            <point>733.248 -29.4568 -135.955</point>
+          </knot>
+          <knot type="bezier">
+            <invec>729.421 -29.687 -169.847</invec>
+            <outvec>778.62 -29.687 -169.847</outvec>
+            <point>754.021 -29.687 -169.847</point>
+          </knot>
+          <knot type="corner">
+            <invec>835.199 -34.0783 -168.754</invec>
+            <outvec>966.254 -38.4695 -167.96</outvec>
+            <point>891.778 -38.4695 -167.661</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>1040.73 -38.4695 -168.259</invec>
+            <outvec>1108.87 -38.4695 -170.142</outvec>
+            <point>1048.38 -38.4695 -169.352</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1171.8 -38.4695 -171.53</invec>
+            <outvec>1195.8 -38.4695 -169.003</outvec>
+            <point>1183.8 -38.4695 -170.267</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1221.07 -56.5159 -165.845</invec>
+            <outvec>1250.12 -56.5159 -100.782</outvec>
+            <point>1235.6 -56.5159 -133.313</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1267.5 -89.1647 -62.5654</invec>
+            <outvec>1286.45 -89.1647 -49.9319</outvec>
+            <point>1276.97 -89.1647 -56.2487</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1296.55 -97.4447 -33.8241</invec>
+            <outvec>1359.72 -97.4447 -31.929</outvec>
+            <point>1328.14 -97.4447 -32.8765</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1352.77 -97.4447 -76.7782</invec>
+            <outvec>1354.04 -97.4447 -86.2534</outvec>
+            <point>1353.4 -97.4447 -81.5158</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1352.77 -80.0246 -158.581</invec>
+            <outvec>1354.04 -80.0246 -201.535</outvec>
+            <point>1353.4 -80.0246 -180.058</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1353.72 -127.407 -217.958</invec>
+            <outvec>1362.56 -127.407 -238.172</outvec>
+            <point>1358.14 -127.407 -228.065</point>
+          </knot>
+          <knot type="bezier">
+            <invec>1352.14 -127.407 -269.124</invec>
+            <outvec>1348.98 -127.407 -281.758</outvec>
+            <point>1350.56 -127.407 -275.441</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>1346.39 -127.407 -306.311</invec>
+            <outvec>1349.98 -127.407 -519.055</outvec>
+            <point>1351.13 -127.407 -323.366</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>1348.96 -190.16 -715.001</invec>
+            <outvec>1347.14 -188.003 -1107.31</outvec>
+            <point>1348.05 -189.082 -911.153</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>1346.34 -195.083 -1194.46</invec>
+            <outvec>1344.91 -191.247 -1587.49</outvec>
+            <point>1345.63 -193.165 -1390.98</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>1344.28 99.4833 -1398.84</invec>
+            <outvec>1343.12 104.517 -1792.37</outvec>
+            <point>1343.7 102 -1595.6</point>
+          </knot>
+          <knot type="bezier_corner">
+            <invec>1342.6 87.5251 -2483.77</invec>
+            <outvec>1341.61 93.2778 -2877.62</outvec>
+            <point>1342.1 90.4014 -2680.69</point>
+          </knot>
+          <knot type="corner">
+            <invec>1341.14 72.1221 -3074.59</invec>
+            <outvec>1366.17 45.1029 -3349.64</outvec>
+            <point>1340.67 50.9665 -3271.57</point>
+          </knot>
+          <knot type="corner">
+            <invec>1391.66 39.2392 -3427.71</invec>
+            <outvec>1418.01 21.5744 -3835.08</outvec>
+            <point>1417.15 33.3756 -3505.78</point>
+          </knot>
+          <knot type="corner">
+            <invec>1418.88 9.77323 -4164.37</invec>
+            <outvec>1419.74 -2.02795 -4493.67</outvec>
+            <point>1419.74 -2.02795 -4493.67</point>
+          </knot>
+        </spline3d>
+      </spline>
+    </geometry>
+  </library>
+
+  <scene id="DefaultScene">
+    <node id="StageGuidePath" name="StageGuidePath">
+      <translate>694.465 0 -275.05</translate>
+      <scale>1 1 1</scale>
+      <rotate>0 0 0 1</rotate>
+      <instance url="#StageGuidePath-geometry"/>
+    </node>
+  </scene>
+
+</SonicPath>
