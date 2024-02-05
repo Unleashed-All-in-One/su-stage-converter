@@ -12,15 +12,20 @@ static class Program
     static string pathToStageArchive;
     static string pathToSetArchive;
     static string pathToStagePfd;
+    static string pathToStagePfdAdd;
 
 
     static string m_FolderStage;
     static string m_FolderHashtag;
     static string m_FolderStagePFD;
+    static string m_FolderStagePFDAdd;
 
     static string m_FolderNewHashtag;
     static string m_FolderNewStage;
+
+    static string m_StageID = "ghz200";
     static List<string> m_ListOriginalFiles = new List<string>();
+    static List<string> m_ListTempFolders= new List<string>();
     public static string? ProgramPath
     {
         get
@@ -34,7 +39,7 @@ static class Program
     {
         get
         {
-            return Path.Combine(ProgramPath, "OriginalFiles");
+            return Path.Combine(ProgramPath, "Output");
         }
     }
     private static bool IsFileLocked(FileInfo file)
@@ -72,6 +77,16 @@ static class Program
         startInfo.CreateNoWindow = true;
         Process? extractPacked = Process.Start(startInfo);
         extractPacked.WaitForExit();
+    }
+    static void OpenFolder(string path)
+    {
+        ProcessStartInfo startInfo = new ProcessStartInfo();
+        startInfo.FileName = "explorer.exe";
+        startInfo.Arguments = $"{path}";
+        startInfo.UseShellExecute = false;
+        startInfo.RedirectStandardOutput = true;
+        startInfo.CreateNoWindow = true;
+        Process? extractPacked = Process.Start(startInfo);
     }
     static void hkxconverter(string path)
     {
@@ -168,6 +183,7 @@ static class Program
         var tempPath = Directory.GetParent(path).FullName;
         tempPath += "_temp";
         CreateDirectoryIfNotExist(tempPath);
+        m_ListTempFolders.Add(tempPath);
         tempPath = Path.Combine(tempPath, Path.GetFileName(path));
 
         ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -197,7 +213,7 @@ static class Program
         return files.Where(f => extensions.Contains(f.Extension));
     }
 
-    public static void CopyAndExtractAR(string pathToFirst, string destination, bool isArchive = true)
+    public static void CopyAndExtractAR(string pathToFirst, string destination, bool isArchive = true, bool forceNoExtract = false)
     {
         string pathC = @Path.Combine(destination, Path.GetFileName(@pathToFirst));
         //Has the file been copied before?
@@ -260,7 +276,7 @@ static class Program
                 }
             }
 
-
+            if(!forceNoExtract)
             ExtractAR(@firstFileOutputPath);
         }
     }
@@ -299,13 +315,78 @@ static class Program
     }
     static void Main()
     {
+        Startup();
+    }
+    static void Startup()
+    {
+        Console.Clear();
+        Console.WriteLine("Do you want to port a stage (1), or separate level archives from Unleashed(2)?");
+        var choice = Console.ReadLine();
+        if (choice == "1")
+        {
+            PorterScreen();
+        }
+        else
+        {
+            OrganizeFiles();
+        }
+    }
+    static void OrganizeFiles()
+    {
+        Console.Clear();
+        Console.WriteLine("Do you want to separate ALL archives from an extracted Unleashed copy (1) or do you want to separate just one (2)?");
+        var choice = Console.ReadLine();
+        if (choice == "1")
+        {
+
+            Console.WriteLine("Enter the path to your extracted Unleashed installation:");
+            var path = Console.ReadLine();
+            var files = Directory.EnumerateFiles(path).Where(x => x.Contains("#ActD_") && (x.EndsWith(".ar.00") || x.EndsWith(".ar")));
+            var filesN = Directory.EnumerateFiles(path).Where(x => x.Contains("#ActN_") && (x.EndsWith(".ar.00") || x.EndsWith(".ar")));
+            var total = files.ToList();
+            total.AddRange(filesN);
+            OrganizeFiles(total);
+        }
+        else
+        {
+
+        }
+    }
+    static void OrganizeFiles(List<string> files)
+    {
+        var m_FolderFilesOrg = Directory.CreateDirectory(Path.Combine(ProgramPath, "OrganizedFiles"));
+        foreach(var file in files)
+        {
+            if(File.Exists(file))
+            {
+                var folderPath = Path.Combine(m_FolderFilesOrg.FullName, Path.GetFileName(file).Replace(".ar.00", "").Replace("#", ""));
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                if (!Directory.Exists(Path.Combine(folderPath, "Packed")))
+                {
+                    Directory.CreateDirectory(Path.Combine(folderPath, "Packed"));
+                }
+                CopyAndExtractAR(file, folderPath, true, true);
+
+                CopyAndExtractAR(file.Replace("#", ""), folderPath, true, true);
+                string test = Path.Combine(Directory.GetParent(file).FullName, "Packed", Path.GetFileName(file).Replace(".ar.00", "").Replace("#", ""), "Stage.pfd");
+                CopyAndExtractAR(test, Path.Combine(folderPath, "Packed"), false, true);
+            }
+        }
+        Cleanup(false);
+        EndScreen();
+    }
+    static void PorterScreen()
+    {
         origRow = Console.CursorTop;
         origCol = Console.CursorLeft;
 
         //Define archive path
         ColoredTextLine("Enter the path to your STAGE archive from Sonic Unleashed (Root/stagename.ar.00):", ConsoleColor.Black, ConsoleColor.White);
         pathToStageArchive = GetTextWithoutQuotations(Console.ReadLine());
-        if(File.Exists(pathToStageArchive))
+        if (File.Exists(pathToStageArchive))
         {
             Console.WriteLine("OK!");
         }
@@ -331,7 +412,7 @@ static class Program
         //Define PFD path
         ColoredTextLine("Enter the path to your STAGE.PFD file from Sonic Unleashed (Root/Packed/stagename/Stage.pfd):", ConsoleColor.Black, ConsoleColor.White);
         pathToStagePfd = GetTextWithoutQuotations(Console.ReadLine());
-        if (File.Exists(pathToStagePfd) &&  Path.GetExtension(pathToStagePfd).Contains("pfd"))
+        if (File.Exists(pathToStagePfd) && Path.GetExtension(pathToStagePfd).Contains("pfd"))
         {
             Console.WriteLine("OK!");
         }
@@ -339,6 +420,14 @@ static class Program
         {
             Console.WriteLine("Path does not exist. Please try again.");
             return;
+        }
+
+        //Define PFD HD path
+        ColoredTextLine("Enter the path to your STAGE-ADD.PFD file from Sonic Unleashed (Root/Packed/stagename/Stage.pfd), you can leave it empty if you don't have it:", ConsoleColor.Black, ConsoleColor.White);
+        pathToStagePfdAdd = GetTextWithoutQuotations(Console.ReadLine());
+        if (File.Exists(pathToStagePfdAdd) && Path.GetExtension(pathToStagePfdAdd).Contains("pfd"))
+        {
+            Console.WriteLine("OK!");
         }
 
 
@@ -349,7 +438,15 @@ static class Program
         Thread.Sleep(1000);
         Console.WriteLine("\nPlease press any key to start the conversion process... ");
         Console.ReadKey();
+        ColoredTextLine("Enter the stage's new StageID:", ConsoleColor.Black, ConsoleColor.White);
+        m_StageID = GetTextWithoutQuotations(Console.ReadLine());
+        if (string.IsNullOrEmpty(m_StageID))
+        {
+            m_StageID = "ghz200";
+        }
         Console.Clear();
+
+
 
 
         CleanupLastTry();
@@ -365,25 +462,49 @@ static class Program
 
     private static void EndScreen()
     {
-        Console.Beep(500, 1000);
         Console.Clear();
         ColoredTextLine("[v] Stage has been converted successfully!", ConsoleColor.White, ConsoleColor.Green);
         Console.WriteLine("NOTE: Now that you've run this, you need to go in GLVL 0.5.7 (NOT SVN), do File > Fix all materials in folder and pick the packed stage folder, then open the stage and repack with visibility tree ticked off.\n If you want to add the HD GI, run this tool twice with the pfd replaced with the -Add pfd instead. I'll fix this another time.");
 
         Console.WriteLine("Do note that Spagonia levels may have a \"Stage_old\" XML which is actually the Stage xml, copy the contents of the _old to the regular one.");
-        Console.WriteLine("Press any key to close...");
+        Console.WriteLine("Press any key to close, or R to go back to the start...");
+        var key = Console.ReadKey();
+        if(key.KeyChar.ToString().ToLower() == "r")
+        {
+            Startup();
+        }
+        else
+            OpenFolder(FilesDirectory);
     }
 
-    private static void Cleanup()
+    private static void Cleanup(bool cleanOriginal = true)
     {
-        Directory.Delete(m_FolderStage, true);
-        Directory.Delete(m_FolderStagePFD, true);
-        Directory.Delete(m_FolderNewHashtag, true);
-        Directory.Delete(m_FolderHashtag, true);
-        foreach(var path in m_ListOriginalFiles)
+        if (Directory.Exists(m_FolderStage))
+            Directory.Delete(m_FolderStage, true);
+
+        if (Directory.Exists(m_FolderStagePFD))
+            Directory.Delete(m_FolderStagePFD, true);
+
+        if (Directory.Exists(m_FolderStagePFDAdd))
+            Directory.Delete(m_FolderStagePFDAdd, true);
+
+        if (Directory.Exists(m_FolderNewHashtag))
+            Directory.Delete(m_FolderNewHashtag, true);
+
+        if (Directory.Exists(m_FolderHashtag))
+            Directory.Delete(m_FolderHashtag, true);
+        if(cleanOriginal)
         {
-            if (File.Exists(path))
-                File.Delete(path);
+            foreach (var path in m_ListOriginalFiles)
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+        }
+        foreach(var path in m_ListTempFolders)
+        {
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
         }
     }
 
@@ -392,11 +513,22 @@ static class Program
         Console.WriteLine($"[i] Repacking pfd...");
         pfdPack(m_FolderStagePFD);
 
+        if(!string.IsNullOrEmpty(m_FolderStagePFDAdd))
+        {
+            Console.WriteLine($"[i] Repacking Add pfd...");
+            pfdPack(m_FolderStagePFDAdd);
+        }
+
+
         Console.WriteLine($"[i] Moving pfi to {m_FolderNewStage}...");
         File.Move(Path.Combine(FilesDirectory, "Stage.pfi"), Path.Combine(m_FolderNewStage, "Stage.pfi"));
+        if (File.Exists(Path.Combine(FilesDirectory, "Stage-Add.pfi")))
+            File.Move(Path.Combine(FilesDirectory, "Stage-Add.pfi"), Path.Combine(m_FolderNewStage, "Stage-Add.pfi"));
 
         Console.WriteLine($"[i] Moving pfd to Packed...");
         File.Move(Path.Combine(FilesDirectory, "Stage.pfd"), Path.Combine(Directory.GetParent(m_FolderNewStage).FullName, "Stage.pfd"));
+        if(File.Exists(Path.Combine(FilesDirectory, "Stage-Add.pfd")))
+            File.Move(Path.Combine(FilesDirectory, "Stage-Add.pfd"), Path.Combine(Directory.GetParent(m_FolderNewStage).FullName, "Stage-Add.pfd"));
         Console.WriteLine($"[i] Repacking {m_FolderNewStage}...");
         PackAR(m_FolderNewStage);
 
@@ -430,59 +562,63 @@ static class Program
         string[] stageXMLContents = File.ReadAllLines(stagePath);
         List<string> newStageXML = stageXMLContents.ToList();
 
-        foreach (var myString in stageXMLContents)
+        foreach (var stageString in stageXMLContents)
         {
+            if (stageString.Contains("<Evil>"))
+                stageString.Replace("<Evil>", "<Sonic>");
 
-            if (myString.Contains("<Terrain>"))
+            if (stageString.Contains("</Evil>"))
+                stageString.Replace("</Evil>", "</Sonic>");
+
+            if (stageString.Contains("<Terrain>"))
             {
                 includeInTerrain = true;
             }
-            else if (myString.Contains("</Sky>"))
+            else if (stageString.Contains("</Sky>"))
             {
                 includeInTerrain = false;
-                newTerrainFile += $"\n{myString}";
-                newStageXML.Remove(myString);
+                newTerrainFile += $"\n{stageString}";
+                newStageXML.Remove(stageString);
             }
 
-            if (myString.Contains("<SetData>"))
+            if (stageString.Contains("<SetData>"))
             {
                 setData = true;
             }
-            else if (myString.Contains("</SetData>"))
+            else if (stageString.Contains("</SetData>"))
             {
                 setData = false;
-                newStageXML.Remove(myString);
+                newStageXML.Remove(stageString);
             }
-            if (myString.Contains("<Instancer>"))
+            if (stageString.Contains("<Instancer>"))
             {
                 includeInInstancer = true;
             }
-            else if (myString.Contains("</Instancer>"))
+            else if (stageString.Contains("</Instancer>"))
             {
-                Console.WriteLine($"Deleted \"{myString}\"");
+                Console.WriteLine($"Deleted \"{stageString}\"");
                 includeInInstancer = false;
-                newTerrainFile += $"\n{myString}";
-                newStageXML.Remove(myString);
+                newTerrainFile += $"\n{stageString}";
+                newStageXML.Remove(stageString);
             }
 
             if (setData)
-                newStageXML.Remove(myString);
+                newStageXML.Remove(stageString);
 
             if (includeInTerrain)
             {
-                Console.WriteLine($"Deleted \"{myString}\"");
-                newTerrainFile += $"\n{myString}";
-                newStageXML.Remove(myString);
+                Console.WriteLine($"Deleted \"{stageString}\"");
+                newTerrainFile += $"\n{stageString}";
+                newStageXML.Remove(stageString);
             }
             if (includeInInstancer)
             {
-                Console.WriteLine($"Deleted \"{myString}\"");
-                newInstancerFile += $"\n{myString}";
-                newStageXML.Remove(myString);
+                Console.WriteLine($"Deleted \"{stageString}\"");
+                newInstancerFile += $"\n{stageString}";
+                newStageXML.Remove(stageString);
 
             }
         }
-
         newTerrainFile = newTerrainFile.Insert(0, XMLStart);
         newTerrainFile = newTerrainFile.Insert(newTerrainFile.Length, XMLEnd);
 
@@ -518,7 +654,7 @@ static class Program
     }
     private static void MoveStageToBBStyleFolder()
     {
-        var newStageFolderPacked = Path.Combine(FilesDirectory, "Packed", "ghz200", "ghz200");
+        var newStageFolderPacked = Path.Combine(FilesDirectory, "Packed", m_StageID, m_StageID);
         var stageFilesExceptHKX = Directory.GetFiles(m_FolderStage).Where(name => !name.EndsWith(".hkx", StringComparison.OrdinalIgnoreCase));
         var stageFilesHKX = Directory.GetFiles(m_FolderStage).Where(name => name.EndsWith(".hkx", StringComparison.OrdinalIgnoreCase));
         //Move all files that arent HKXs to the new stage folder
@@ -542,8 +678,8 @@ static class Program
     }
     private static void MoveFilesToCorrectLocations()
     {
-        m_FolderNewHashtag = @Path.Combine(FilesDirectory, "#ghz200");
-        CloneDirectory(@Path.Combine(ProgramPath, "TemplateHashtag"), @Path.Combine(FilesDirectory, "#ghz200")); 
+        m_FolderNewHashtag = @Path.Combine(FilesDirectory, $"#{m_StageID}");
+        CloneDirectory(@Path.Combine(ProgramPath, "TemplateHashtag"), @Path.Combine(FilesDirectory, $"#{m_StageID}")); 
         //Copy files from #stage to stage
         var fromHashtag_toStage = GetFilesByExtensions(new DirectoryInfo(@m_FolderHashtag), ".gil", ".gi-texture-group-info", ".light", ".light-list", ".tbst", ".terrain", ".terrain-group");
         foreach(var f in fromHashtag_toStage)
@@ -554,26 +690,31 @@ static class Program
         }
 
         CreateDirectoryIfNotExist(Path.Combine(FilesDirectory, "Packed"));
-        CreateDirectoryIfNotExist(Path.Combine(FilesDirectory, "Packed", "ghz200"));
+        CreateDirectoryIfNotExist(Path.Combine(FilesDirectory, "Packed", $"{m_StageID}"));
         //This'll become an archive
-        CreateDirectoryIfNotExist(Path.Combine(FilesDirectory, "Packed", "ghz200", "ghz200"));        
+        CreateDirectoryIfNotExist(Path.Combine(FilesDirectory, "Packed", $"{m_StageID}", $"{m_StageID}"));        
     }
     private static void CopyArchivesToProgram()
     {
         if (!Directory.Exists(FilesDirectory))
             Directory.CreateDirectory(FilesDirectory);
-        ColoredTextLine("[1] Copying files from original folders to \"OriginalFiles\"", ConsoleColor.Gray, ConsoleColor.Black);
+        ColoredTextLine("[1] Copying files from original folders to \"Output\"", ConsoleColor.Gray, ConsoleColor.Black);
         CopyAndExtractAR(@pathToStageArchive, FilesDirectory);
         CopyAndExtractAR(@pathToSetArchive, FilesDirectory);
         CopyAndExtractAR(@pathToStagePfd, FilesDirectory, false);
+        if(File.Exists(@pathToStagePfdAdd))
+            CopyAndExtractAR(@pathToStagePfdAdd, FilesDirectory, false);
 
         m_FolderStage =     Path.Combine(FilesDirectory, Path.GetFileNameWithoutExtension(pathToStageArchive).Split(".ar")[0]);
         m_FolderHashtag =   Path.Combine(FilesDirectory, Path.GetFileNameWithoutExtension(pathToSetArchive).Split(".ar")[0]);
         m_FolderStagePFD =  Path.Combine(FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfd).Split(".pfd")[0]);
+
+        if (File.Exists(@pathToStagePfdAdd))
+            m_FolderStagePFDAdd = Path.Combine(FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfdAdd).Split(".pfd")[0]);
     }
     private static void CleanupLastTry()
     {
-        string directoryPath = Path.Combine(ProgramPath, "OriginalFiles");
+        string directoryPath = FilesDirectory;
         if (!Directory.Exists(directoryPath))
             return;
 
