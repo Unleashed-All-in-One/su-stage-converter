@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace SUC_Converter
 {
@@ -385,17 +386,17 @@ namespace SUC_Converter
     public partial class SceneOffset
     {
 
-        private decimal txField;
+        private string txField;
 
-        private decimal tyField;
+        private string tyField;
 
-        private decimal tzField;
+        private string tzField;
 
-        private decimal ryField;
+        private string ryField;
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal Tx
+        public string Tx
         {
             get
             {
@@ -409,7 +410,7 @@ namespace SUC_Converter
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal Ty
+        public string Ty
         {
             get
             {
@@ -423,7 +424,7 @@ namespace SUC_Converter
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal Tz
+        public string Tz
         {
             get
             {
@@ -437,7 +438,7 @@ namespace SUC_Converter
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal Ry
+        public string Ry
         {
             get
             {
@@ -1044,6 +1045,8 @@ namespace SUC_Converter
         private string skeletonField;
 
         private string animationField;
+        [XmlIgnoreAttribute()]
+        public int internal_ID;
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("UVAnimation")]

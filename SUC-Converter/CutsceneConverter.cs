@@ -16,7 +16,7 @@ namespace SUC_Converter
     {
         static List<string> pathsArchives = new List<string>();
         static List<string> namesForPathArchives = new List<string>();
-        static Different.InspireResource inspireSource;
+        static SUC_Converter.InspireResource inspireSource;
         static string outXML_Filename;
         static string evs_ID;
         static string directoryOutput
@@ -106,19 +106,21 @@ namespace SUC_Converter
                     Utility.ExtractAR(@firstFileOutputPath);
             }
         }
-        public static void Test1()
+        public static void Start()
         {
             Console.Clear();
+            Utility.ColoredTextLine("Clearing last attempt...", ConsoleColor.DarkGray, ConsoleColor.Black);
             if (Directory.Exists(Utility.CutscenesFilesDirectory))
                 Directory.Delete(Utility.CutscenesFilesDirectory, true);
             if (!Directory.Exists(Utility.CutscenesFilesDirectory))
                 Directory.CreateDirectory(Utility.CutscenesFilesDirectory);
             if (!Directory.Exists(directoryOutput))
                 Directory.CreateDirectory(directoryOutput);
-            Console.WriteLine("CutsceneConverter");
-            Console.WriteLine("This tool will attempt to convert an Inspire cutscene to an EVS format so that Generations can play them back.");
-            Utility.ColoredTextLine("NOTE: For some reason, some objects may crash the game because of invalid/missing materials and animations, if the cutscene crashes, make sure you have everything, and if it still crashes then try to strip down the \"Object\" values in the ev(ID).xml file and convert it to evs again using EVSXML.", ConsoleColor.Blue, ConsoleColor.Black);
-            Console.WriteLine("Path to cutscene archive (Inspire\\scene\\m_xxxxx.ar): ");
+            Console.Clear();
+            Utility.ColoredTextLine("CutsceneConverter", ConsoleColor.Black, ConsoleColor.White);
+            Utility.ColoredTextLine("This tool will attempt to convert an Inspire cutscene to an EVS format so that Generations can play them back.", ConsoleColor.White, ConsoleColor.Black);
+            Utility.ColoredTextLine("NOTE: For some reason, some objects may crash the game because of invalid/missing materials and animations, if the cutscene crashes, make sure you have everything, and if it still crashes then try to strip down the \"Object\" values in the ev(ID).xml file and convert it to evs again using EVSXML.\n", ConsoleColor.Black, ConsoleColor.Blue);
+            Utility.ColoredTextLine("Path to cutscene archive (Inspire\\scene\\m_xxxxx.ar): ", ConsoleColor.Black, ConsoleColor.White);
             string path = Console.ReadLine();
             string pathWithoutQuotes = path.Replace("\"", "");
             CopyAndExtractAR(@pathWithoutQuotes, directoryOutput, true);
@@ -127,46 +129,43 @@ namespace SUC_Converter
             {
                 if (f2.Contains(".inspire_resource.xml") && !f2.Contains("bgm") && !f2.Contains("voice"))
                 {
-                    Console.WriteLine($"GOT XML FILE {f2}");
+                    Utility.ColoredTextLine($"Found inspire_resource file: \"{Path.GetFileName(f2)}\".", ConsoleColor.DarkGray, ConsoleColor.Black);
                     ConvertInspireToEVS(f2);
                     break;
                 }
             }
             Utility.evs2xml(outXML_Filename);
 
-            Console.WriteLine("\n\nYou have to find these following model files yourself:");
+            Utility.ColoredTextLine($"\nYou have to find these following model files yourself:", ConsoleColor.Blue, ConsoleColor.Black);
             foreach (var e in namesForPathArchives)
             {
                 string test3 = Path.Combine(Directory.GetParent(outXML_Filename).FullName, e + ".model");
                 if (!File.Exists(test3))
                     Console.WriteLine($"     {e}");
             }
-            Console.WriteLine($"Once you've done that and you've dragged the required files into {Directory.GetParent(outXML_Filename).FullName}, press any key.");
+            Utility.ColoredTextLine($"Once you've done that and you've dragged the required files into {Directory.GetParent(outXML_Filename).FullName}, press any key.", ConsoleColor.Blue, ConsoleColor.Black);
             Console.ReadKey();
             string folderOut = Path.Combine(Utility.CutscenesFilesDirectory, evs_ID);
             Directory.Move(Directory.GetParent(outXML_Filename).FullName, Path.Combine(Utility.CutscenesFilesDirectory, evs_ID));
             var filesOut = Directory.EnumerateFiles(folderOut);
 
-            foreach (var e in namesForPathArchives)
-            {
-
-            }
             foreach (var file in filesOut)
             {
                 if (file.EndsWith(".hkx"))
                 {
-                    Console.WriteLine($"Converting HKX {Path.GetFileName(file)}");
+                    Console.WriteLine($"[i] Converting HKX \"{Path.GetFileName(file)}\" and resaving meta...");
                     Utility.hkxconverter(file);
                 }
-                if (file.EndsWith(".material") || file.EndsWith(".model"))
+                if (file.EndsWith(".material"))
                 {
+                    Console.WriteLine($"[i] Running Unleashed2Generations on \"{Path.GetFileName(file)}\"...");
                     Utility.matfixer(file);
                 }
             }
-            Console.Write("Packing AR...");
+            Console.Write("[i] Repacking AR...");
             Utility.PackAR(folderOut);
-            Utility.OpenFolder(Directory.GetParent(folderOut).FullName);
-            //foreach (var e in namesForPathArchives)
+            Utility.EndScreen("Cutscene has been converted successfully!", "The cutscene may crash because of invalid animations, please check that your animation files exist.\nIf you want to get rid of shader errors, use SUC-ShaderConverter.", Directory.GetParent(folderOut).FullName);
+                       //foreach (var e in namesForPathArchives)
             //{
             //    Console.WriteLine($"Please enter the path to an archive containing \"{e}\"");
             //    string outs = Console.ReadLine();
@@ -188,27 +187,33 @@ namespace SUC_Converter
 
         }
 
+        public const double Rad2Deg = 180.0 / Math.PI;
         static void ConvertInspireToEVS(string path)
         {
             var e = File.ReadAllLines(@path);
-            XmlSerializer serializer = new XmlSerializer(typeof(Different.InspireResource));
+            XmlSerializer serializer = new XmlSerializer(typeof(SUC_Converter.InspireResource));
             using (StreamReader reader = new StreamReader(@path))
             {
-                inspireSource = (Different.InspireResource)(serializer.Deserialize(reader));
+                inspireSource = (SUC_Converter.InspireResource)(serializer.Deserialize(reader));
             }
-
-            Console.WriteLine("Enter evsID for cutscene (e.g: ev013):");
+            Utility.ColoredTextLine("Enter evsID for cutscene (default: ev031):", ConsoleColor.Black, ConsoleColor.White);
             evs_ID = Console.ReadLine();
-            Console.WriteLine("Enter stageID for cutscene:");
+            if (string.IsNullOrEmpty(evs_ID))
+                evs_ID = "ev031";
+
+            Utility.ColoredTextLine("Enter stageID for the cutscene (default: cpz200):", ConsoleColor.Black, ConsoleColor.White);
             string stageID = Console.ReadLine();
-            Console.WriteLine("Enter sound cue sheet (default: 30VCE_STE): ");
+            if (string.IsNullOrEmpty(stageID))
+                stageID = "cpz200";
+
+            Utility.ColoredTextLine("Enter sound cue sheet (default: 30VCE_STE): ", ConsoleColor.Black, ConsoleColor.White);
             string soundCueSheet = Console.ReadLine();
             if(string.IsNullOrEmpty(soundCueSheet))
             {
                 soundCueSheet = "30VCE_STE";
             }
 
-            Console.WriteLine($"Enter sound cue (default: {evs_ID}):");
+            Utility.ColoredTextLine($"Enter sound cue (default: {evs_ID}):", ConsoleColor.Black, ConsoleColor.White);
             string soundCue = Console.ReadLine();
             if(string.IsNullOrEmpty(soundCue))
             {
@@ -220,10 +225,6 @@ namespace SUC_Converter
             evsOutput.Name = evs_ID;
 
             evsOutput.Offset = new SceneOffset();
-            evsOutput.Offset.Tx = 0;
-            evsOutput.Offset.Ty = 0;
-            evsOutput.Offset.Tz = 0;
-            evsOutput.Offset.Ry = 0;
 
             evsOutput.Wait = new SceneWait();
             evsOutput.Wait.Before = 30;
@@ -246,6 +247,16 @@ namespace SUC_Converter
             evsOutput.FadeOut.Length = 15;
             List<SceneObject> objects = new List<SceneObject>();
             List<SceneShadowSet> shadows = new List<SceneShadowSet>();
+            List<SUC_Converter.InspireResourceResource> modelData = new List<SUC_Converter.InspireResourceResource>();
+            List<SUC_Converter.InspireResourceResource> animData = new List<SUC_Converter.InspireResourceResource>();
+            List<SUC_Converter.InspireResourceResource> texcoordData = new List<SUC_Converter.InspireResourceResource>();
+            List<SUC_Converter.InspireResourceResource> morphAnimData = new List<SUC_Converter.InspireResourceResource>();
+            var strings = inspireSource.TerrainInfo.Matrix.Split(" ");
+            evsOutput.Offset.Tx = strings[12];
+            evsOutput.Offset.Ty = strings[13];
+            evsOutput.Offset.Tz = strings[14];
+            float rotation = float.Parse(strings[10].Replace(".", ","));
+            evsOutput.Offset.Ry = (-(Math.Round(Math.Acos(rotation) * Rad2Deg))).ToString().Replace(",", ".");
             foreach (var ri in inspireSource.ResourceInfo)
             {
                 if (ri.Type == "CameraMotionData")
@@ -271,51 +282,77 @@ namespace SUC_Converter
                     shadows.Add(sceneShadowSet);
                 }
                 if (ri.Type == "ModelData")
-                {
-                    SceneObject obj = new SceneObject();
-                    obj.Model = ri.Param.FileName;
-                    obj.Name = $"object{objects.Count}";
-                    obj.Skeleton = ri.Param.SkeltonData;
-                    obj.Animation = ri.Param.SkeltonData;
-                    namesForPathArchives.Add(obj.Model);
-                    objects.Add(obj);
+                {                    
+                    modelData.Add(ri);
                 }
                 if (ri.Type == "TexcoordAnimationData")
                 {
-                    if (objects[^1].UVAnimation == null)
-                        objects[^1].UVAnimation = new List<SceneObjectUVAnimation>();
-                    SceneObjectUVAnimation sceneObjectUVAnimation = new SceneObjectUVAnimation();
-                    sceneObjectUVAnimation.Name = ri.Param.FileName;
-                    objects[^1].UVAnimation.Add(sceneObjectUVAnimation);
+                    texcoordData.Add(ri);
                 }
                 if (ri.Type == "AnimationData")
                 {
-                    decimal modelID = ri.Param.ModelID;
-                    var idname = inspireSource.ResourceInfo.FirstOrDefault(x => x.ID == modelID);
-                    if (idname != default)
-                    {
-                        var objS = objects.First(x => x.Model.Contains(idname.Param.FileName));
-
-                        if (string.IsNullOrEmpty(objS.Animation))
-                            objS.Animation = ri.Param.FileName;
-                        else
-                            Utility.ColoredTextLine($"More than one anim defined for {objS.Model}.", ConsoleColor.Yellow, ConsoleColor.Black);
-                    }
+                    animData.Add(ri);
                 }
                 if (ri.Type == "MorphMotionData")
                 {
-                    decimal modelID = ri.Param.ModelID;
-                    var idname = inspireSource.ResourceInfo.FirstOrDefault(x => x.ID == modelID);
-                    if (idname != default)
-                    {
-                        var objS = objects.First(x => x.Model.Contains(idname.Param.FileName));
-                        objS.VisibilityAnimation = new SceneObjectVisibilityAnimation();
-                        objS.VisibilityAnimation.Name = ri.Param.FileName;
-                    }
+                    morphAnimData.Add(ri);
                 }
                 Console.WriteLine($"ID: {ri.ID} | {ri.Param} | {ri.Type}");
             }
-
+            foreach (var modelSingle in modelData)
+            {
+                SceneObject obj = new SceneObject();
+                obj.Model = modelSingle.Param.FileName;
+                obj.Name = $"object{objects.Count}";
+                obj.Skeleton = modelSingle.Param.SkeltonData;
+                obj.internal_ID = (int)modelSingle.ID;
+                namesForPathArchives.Add(obj.Model);
+                objects.Add(obj);
+            }
+            foreach (var texcoordSingle in texcoordData)
+            {
+                decimal modelID = texcoordSingle.Param.ModelID;
+                var objectFound = objects.FirstOrDefault(x => x.internal_ID == modelID);
+                if (objectFound != default)
+                {
+                    SceneObjectUVAnimation sceneObjectUVAnimation = new SceneObjectUVAnimation();
+                    sceneObjectUVAnimation.Name = texcoordSingle.Param.FileName;
+                    if (objectFound.UVAnimation == null)
+                        objectFound.UVAnimation = new List<SceneObjectUVAnimation>();
+                    objectFound.UVAnimation.Add(sceneObjectUVAnimation);
+                }
+            }
+            foreach (var animSingle in animData)
+            {
+                decimal modelID = animSingle.Param.ModelID;
+                var objectFound = objects.FirstOrDefault(x => x.internal_ID == modelID);
+                if (objectFound != default)
+                {
+                    if (string.IsNullOrEmpty(objectFound.Animation))
+                        objectFound.Animation = animSingle.Param.FileName;
+                    else
+                    {
+                        Utility.ColoredTextLine($"More than one anim defined for {objectFound.Model}. We currently don't know how to play anims at different times, so a new object will be made.", ConsoleColor.Yellow, ConsoleColor.Black);
+                        var newObj = new SceneObject();
+                        newObj.Model = objectFound.Model;
+                        newObj.Name = $"object{objects.Count + 1}";
+                        newObj.Skeleton = objectFound.Skeleton;
+                        newObj.Animation = animSingle.Param.FileName;
+                        newObj.internal_ID = objectFound.internal_ID;
+                        objects.Add(newObj);
+                    }
+                }
+            }
+            foreach (var morpherSingle in morphAnimData)
+            {
+                decimal modelID = morpherSingle.Param.ModelID;
+                var objectFound = objects.FirstOrDefault(x => x.internal_ID == modelID);
+                if (objectFound != default)
+                {
+                    objectFound.VisibilityAnimation = new SceneObjectVisibilityAnimation();
+                    objectFound.VisibilityAnimation.Name = morpherSingle.Param.FileName;
+                }                
+            }
             evsOutput.Shadow.Set = shadows.ToArray();
             evsOutput.Object = objects.ToArray();
             XmlSerializer serializer2 = new XmlSerializer(typeof(Scene));

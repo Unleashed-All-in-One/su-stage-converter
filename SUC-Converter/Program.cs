@@ -99,12 +99,12 @@ static class Program
     {
         Startup();
     }
-    static void Startup()
+    public static void Startup()
     {
         Console.Clear();
-        Utility.ColoredTextLine("SUC-Converter v0.2", ConsoleColor.Black, ConsoleColor.White);
-        Utility.ColoredTextLine("Using ar0unpack,ar0pack,materialfixer from Skyth, HKXConverter from Team Unleashed, and XBCompress", ConsoleColor.DarkGray, ConsoleColor.Black);
-        Console.WriteLine("Do you want to port a stage (1), or separate level archives from Unleashed(2)?");
+        Utility.ColoredTextLine("SUC-Converter v0.4", ConsoleColor.Black, ConsoleColor.White);
+        Utility.ColoredTextLine("Using ar0unpack, ar0pack, Unleashed2Generations from Skyth, HKXConverter from Team Unleashed, and XBCompress", ConsoleColor.DarkGray, ConsoleColor.Black);
+        Console.WriteLine("Do you want to port a stage (1), separate level archives from Unleashed(2), or convert an Inspire cutscene to EVS(3)?");
         var choice = Console.ReadLine();
         if (choice == "1")
         {
@@ -118,7 +118,7 @@ static class Program
         {
             try
             {
-                CutsceneConverter.Test1();
+                CutsceneConverter.Start();
             }
             catch(Exception e)
             {
@@ -173,7 +173,8 @@ static class Program
             }
         }
         Cleanup(false);
-        EndScreen();
+        Utility.EndScreen("Files have been reorganized successfully!", "", m_FolderFilesOrg.FullName);
+
     }
     static void PorterScreen()
     {
@@ -255,7 +256,7 @@ static class Program
         MatFixer();
         RepackEverything();
         Cleanup();
-        EndScreen();
+        Utility.EndScreen("Stage has been converted successfully!", "NOTE: Now that you've run this, you need to go in GLVL 0.5.7 (NOT SVN), do File > Fix all materials in folder and pick the packed stage folder, then open the stage and repack with visibility tree ticked off.\r\nDo note that Spagonia levels may have a \"Stage_old\" XML which is actually the Stage xml, copy the contents of the _old to the regular one.\r\nPress any key to close, or R to go back to the start...\r\n", Utility.FilesDirectory);
     }
 
     private static void MatFixer()

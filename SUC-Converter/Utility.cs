@@ -252,5 +252,23 @@ namespace SUC_Converter
             path = path.Replace("\"", "");
             return path;
         }
+        public static void EndScreen(string title, string note, string folderPath = null)
+        {
+            Console.Clear();
+            Utility.ColoredTextLine($"[v] {title}", ConsoleColor.White, ConsoleColor.DarkGreen);
+            if(!string.IsNullOrEmpty(note))
+                Console.WriteLine($"\nNOTE: {note}");
+            Utility.ColoredTextLine("\nPress any key to close, or R to go back to the start...", ConsoleColor.Yellow, ConsoleColor.Black);
+            var key = Console.ReadKey();
+            if (key.KeyChar.ToString().ToLower() == "r")
+            {
+                Program.Startup();
+            }
+            else
+            {
+                if(folderPath != null)
+                    Utility.OpenFolder(folderPath);
+            }
+        }
     }
 }
