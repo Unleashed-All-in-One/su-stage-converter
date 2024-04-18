@@ -59,6 +59,16 @@ namespace SUC_Converter
             //file is not locked
             return false;
         }
+        public static void fcoEditorCommandline(string path, string arguments)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = @Path.Combine(ProgramPath, "fcoEditorCLI.exe");
+            startInfo.Arguments = path + " " + arguments;
+            startInfo.UseShellExecute = true;
+            startInfo.CreateNoWindow = false;
+            Process? extractPacked = Process.Start(startInfo);
+            extractPacked.WaitForExit();
+        }
         public static void pfdPack(string path)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();

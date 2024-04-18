@@ -105,27 +105,54 @@ static class Program
         Utility.ColoredTextLine("SUC-Converter v0.4", ConsoleColor.Black, ConsoleColor.White);
         Utility.ColoredTextLine("Using ar0unpack, ar0pack, Unleashed2Generations from Skyth, HKXConverter from Team Unleashed, and XBCompress", ConsoleColor.DarkGray, ConsoleColor.Black);
         Console.WriteLine("Do you want to port a stage (1), separate level archives from Unleashed(2), or convert an Inspire cutscene to EVS(3)?");
+        Utility.ColoredTextLine("Choose what to do:", ConsoleColor.Blue, ConsoleColor.Black);
+        Console.WriteLine("    1. Stage Porter");
+        Console.WriteLine("    2. Level Archive Organizer");
+        Console.WriteLine("    3. Inspire to EventScene Converter");
+        Console.WriteLine("    4. CRIWARE CSB Overlapping ID Checker");
+        Utility.ColoredTextLine("Write the number to go to that function.", ConsoleColor.Blue, ConsoleColor.Black);
         var choice = Console.ReadLine();
-        if (choice == "1")
+        switch (choice)
         {
-            PorterScreen();
-        }
-        else if(choice == "2")
-        {
-            OrganizeFiles();
-        }
-        else if(choice == "3")
-        {
-            try
-            {
-                CutsceneConverter.Start();
-            }
-            catch(Exception e)
-            {
-                Utility.ColoredTextLine($"{e.Message} {e.StackTrace} {e.Source}", ConsoleColor.Red, ConsoleColor.Black);
-                Utility.ColoredTextLine($"\n{e.InnerException}", ConsoleColor.Red, ConsoleColor.Black);
-                Console.ReadLine();
-            }
+            case "1":
+                {
+                    PorterScreen();
+                    break;
+                }
+            case "2":
+                {
+                    OrganizeFiles();
+                    break;
+                }
+            case "3":
+                {
+                    try
+                    {
+                        CutsceneConverter.Start();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.ColoredTextLine($"{e.Message} {e.StackTrace} {e.Source}", ConsoleColor.Red, ConsoleColor.Black);
+                        Utility.ColoredTextLine($"\n{e.InnerException}", ConsoleColor.Red, ConsoleColor.Black);
+                        Console.ReadLine();
+                    }
+                    break;
+                }
+            case "4":
+                {
+                    SoundfileChecker.Func();
+                    break;
+                }
+            case "5":
+                {
+                    SubtitleConverter.Run();
+                    break;
+                }
+            default:
+                {
+                    Startup();
+                    break;
+                }
         }
     }
     static void OrganizeFiles()

@@ -1259,3 +1259,451 @@ namespace SUC_Converter
 
 
 }
+namespace SUC_ConverterConverse
+{
+
+    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    public partial class InspireResource
+    {
+
+        private InspireResourceVersionInfo versionInfoField;
+
+        private InspireResourceProjectInfo projectInfoField;
+
+        private InspireResourceTerrainInfo terrainInfoField;
+
+        private InspireResourceResource[] resourceInfoField;
+
+        private InspireResourceTrigger[] triggerInfoField;
+
+        /// <remarks/>
+        public InspireResourceVersionInfo VersionInfo
+        {
+            get
+            {
+                return this.versionInfoField;
+            }
+            set
+            {
+                this.versionInfoField = value;
+            }
+        }
+
+        /// <remarks/>
+        public InspireResourceProjectInfo ProjectInfo
+        {
+            get
+            {
+                return this.projectInfoField;
+            }
+            set
+            {
+                this.projectInfoField = value;
+            }
+        }
+
+        /// <remarks/>
+        public InspireResourceTerrainInfo TerrainInfo
+        {
+            get
+            {
+                return this.terrainInfoField;
+            }
+            set
+            {
+                this.terrainInfoField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Resource", IsNullable = false)]
+        public InspireResourceResource[] ResourceInfo
+        {
+            get
+            {
+                return this.resourceInfoField;
+            }
+            set
+            {
+                this.resourceInfoField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Trigger", IsNullable = false)]
+        public InspireResourceTrigger[] TriggerInfo
+        {
+            get
+            {
+                return this.triggerInfoField;
+            }
+            set
+            {
+                this.triggerInfoField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class InspireResourceVersionInfo
+    {
+
+        private string fileVersionField;
+
+        /// <remarks/>
+        public string FileVersion
+        {
+            get
+            {
+                return this.fileVersionField;
+            }
+            set
+            {
+                this.fileVersionField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class InspireResourceProjectInfo
+    {
+
+        private byte startFrameField;
+
+        private ushort endFrameField;
+
+        private string isFixFrameField;
+
+        /// <remarks/>
+        public byte StartFrame
+        {
+            get
+            {
+                return this.startFrameField;
+            }
+            set
+            {
+                this.startFrameField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ushort EndFrame
+        {
+            get
+            {
+                return this.endFrameField;
+            }
+            set
+            {
+                this.endFrameField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string IsFixFrame
+        {
+            get
+            {
+                return this.isFixFrameField;
+            }
+            set
+            {
+                this.isFixFrameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class InspireResourceTerrainInfo
+    {
+
+        private object terrainGroupField;
+
+        private string matrixField;
+
+        /// <remarks/>
+        public object TerrainGroup
+        {
+            get
+            {
+                return this.terrainGroupField;
+            }
+            set
+            {
+                this.terrainGroupField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string Matrix
+        {
+            get
+            {
+                return this.matrixField;
+            }
+            set
+            {
+                this.matrixField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class InspireResourceResource
+    {
+
+        private byte idField;
+
+        private string typeField;
+
+        private InspireResourceResourceParam paramField;
+
+        /// <remarks/>
+        public byte ID
+        {
+            get
+            {
+                return this.idField;
+            }
+            set
+            {
+                this.idField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string Type
+        {
+            get
+            {
+                return this.typeField;
+            }
+            set
+            {
+                this.typeField = value;
+            }
+        }
+
+        /// <remarks/>
+        public InspireResourceResourceParam Param
+        {
+            get
+            {
+                return this.paramField;
+            }
+            set
+            {
+                this.paramField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class InspireResourceResourceParam
+    {
+
+        private string fileNameField;
+
+        private byte groupIDField;
+
+        private string groupIDNameField;
+
+        private byte cellIDField;
+
+        private string cellIDNameField;
+
+        private string positionField;
+
+        /// <remarks/>
+        public string FileName
+        {
+            get
+            {
+                return this.fileNameField;
+            }
+            set
+            {
+                this.fileNameField = value;
+            }
+        }
+
+        /// <remarks/>
+        public byte GroupID
+        {
+            get
+            {
+                return this.groupIDField;
+            }
+            set
+            {
+                this.groupIDField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string GroupIDName
+        {
+            get
+            {
+                return this.groupIDNameField;
+            }
+            set
+            {
+                this.groupIDNameField = value;
+            }
+        }
+
+        /// <remarks/>
+        public byte CellID
+        {
+            get
+            {
+                return this.cellIDField;
+            }
+            set
+            {
+                this.cellIDField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string CellIDName
+        {
+            get
+            {
+                return this.cellIDNameField;
+            }
+            set
+            {
+                this.cellIDNameField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string Position
+        {
+            get
+            {
+                return this.positionField;
+            }
+            set
+            {
+                this.positionField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class InspireResourceTrigger
+    {
+
+        private byte resourceIDField;
+
+        private InspireResourceTriggerFrame frameField;
+
+        /// <remarks/>
+        public byte ResourceID
+        {
+            get
+            {
+                return this.resourceIDField;
+            }
+            set
+            {
+                this.resourceIDField = value;
+            }
+        }
+
+        /// <remarks/>
+        public InspireResourceTriggerFrame Frame
+        {
+            get
+            {
+                return this.frameField;
+            }
+            set
+            {
+                this.frameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class InspireResourceTriggerFrame
+    {
+
+        private string typeField;
+
+        private ushort startField;
+
+        private ushort endField;
+
+        /// <remarks/>
+        public string Type
+        {
+            get
+            {
+                return this.typeField;
+            }
+            set
+            {
+                this.typeField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ushort Start
+        {
+            get
+            {
+                return this.startField;
+            }
+            set
+            {
+                this.startField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ushort End
+        {
+            get
+            {
+                return this.endField;
+            }
+            set
+            {
+                this.endField = value;
+            }
+        }
+    }
+
+
+}
