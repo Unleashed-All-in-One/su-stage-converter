@@ -359,11 +359,11 @@ static class Program
             Utility.pfdPack(m_FolderStagePFDAdd);
         }
 
-
+         
         Console.WriteLine($"[i] Moving pfi to {m_FolderNewStage}...");
         File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfi"), Path.Combine(m_FolderNewStage, "Stage.pfi"));
         if (File.Exists(Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")))
-            File.Move(Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi"), Path.Combine(m_FolderNewStage, "Stage-Add.pfi"));
+            File.Move(Utility.AddQuotesIfRequired(@Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")), Utility.AddQuotesIfRequired(@Path.Combine(m_FolderNewStage, "Stage-Add.pfi")));
 
         Console.WriteLine($"[i] Moving pfd to Packed...");
         File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfd"), Path.Combine(Directory.GetParent(m_FolderNewStage).FullName, "Stage.pfd"));
@@ -519,9 +519,9 @@ static class Program
     private static void MoveFilesToCorrectLocations()
     {
         m_FolderNewHashtag = @Path.Combine(Utility.FilesDirectory, $"#{m_StageID}");
-        Utility.CloneDirectory(@Path.Combine(Utility.ProgramPath, "TemplateHashtag"), @Path.Combine(Utility.FilesDirectory, $"#{m_StageID}")); 
+        Utility.CloneDirectory(@Path.Combine(Utility.ProgramPath, "TemplateHashtag"), m_FolderNewHashtag); 
         //Copy files from #stage to stage
-        var fromHashtag_toStage = Utility.GetFilesByExtensions(new DirectoryInfo(@m_FolderHashtag), ".gil", ".gi-texture-group-info", ".light", ".light-list", ".tbst", ".terrain", ".terrain-group");
+        var fromHashtag_toStage = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".gil", ".gi-texture-group-info", ".light", ".light-list", ".tbst", ".terrain", ".terrain-group");
         foreach(var f in fromHashtag_toStage)
         {
             Console.WriteLine($"[i] Copying \"{f.Name}\" to stage archive...");
@@ -545,9 +545,9 @@ static class Program
         if(File.Exists(@pathToStagePfdAdd))
             CopyAndExtractAR(@pathToStagePfdAdd, Utility.FilesDirectory, false);
 
-        m_FolderStage =     Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStageArchive).Split(".ar")[0]);
-        m_FolderHashtag =   Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToSetArchive).Split(".ar")[0]);
-        m_FolderStagePFD =  Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfd).Split(".pfd")[0]);
+        m_FolderStage =     (Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStageArchive).Split(".ar")[0]));
+        m_FolderHashtag =   (Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToSetArchive).Split(".ar")[0]));
+        m_FolderStagePFD =  (Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfd).Split(".pfd")[0]));
 
         if (File.Exists(@pathToStagePfdAdd))
             m_FolderStagePFDAdd = Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfdAdd).Split(".pfd")[0]);

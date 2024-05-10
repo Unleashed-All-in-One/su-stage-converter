@@ -17,6 +17,8 @@ namespace SUC_Converter
             {
                 string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
                 string exeDir = System.IO.Path.GetDirectoryName(exePath);
+                exeDir = exeDir.Replace("\"", "");
+
                 return exeDir;
             }
         }
@@ -71,6 +73,7 @@ namespace SUC_Converter
         }
         public static void pfdPack(string path)
         {
+            path = Utility.AddQuotesIfRequired(path);
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @Path.Combine(ProgramPath, "pfdpack.exe");
             startInfo.Arguments = $"{path} {path}";
@@ -78,6 +81,9 @@ namespace SUC_Converter
             startInfo.RedirectStandardOutput = true;
             startInfo.CreateNoWindow = true;
             Process? extractPacked = Process.Start(startInfo);
+            while (!extractPacked.HasExited)
+            {
+            }
             extractPacked.WaitForExit();
         }
         public static void evs2xml(string path)
@@ -202,6 +208,13 @@ namespace SUC_Converter
                 File.Move(Path.Combine(ProgramPath, Path.GetFileName(path)), path);
             }
         }
+        public static string AddQuotesIfRequired(string path)
+        {
+            path = path.Replace("\"", "");
+            path = path.Insert(0, "\"");
+            path = path.Insert(path.Length, "\"");
+            return path;
+        }
         public static void CreateDirectoryIfNotExist(string path)
         {
             if (!Directory.Exists(path))
@@ -230,20 +243,27 @@ namespace SUC_Converter
         }
         public static void PackAR(string? path)
         {
+            path = Utility.AddQuotesIfRequired(path);
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @Path.Combine(ProgramPath, "ar0pack.exe");
             startInfo.Arguments = path;
             Process? extractPacked = Process.Start(startInfo);
+            while (!extractPacked.HasExited)
+            {
+            }
             extractPacked.WaitForExit();
         }
         public static string ExtractAR(string? path)
         {
+            path = Utility.AddQuotesIfRequired(path);
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @Path.Combine(ProgramPath, "ar0unpack.exe");
             startInfo.Arguments = path;
             Process? extractPacked = Process.Start(startInfo);
             extractPacked.WaitForExit();
-
+            while (!extractPacked.HasExited)
+            {
+            }
             path = Path.ChangeExtension(path, null);
             path = Path.ChangeExtension(path, null);
             path = path.Replace("\"", "");
