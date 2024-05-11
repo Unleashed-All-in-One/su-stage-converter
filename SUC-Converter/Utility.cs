@@ -68,6 +68,7 @@ namespace SUC_Converter
             startInfo.Arguments = path + " " + arguments;
             startInfo.UseShellExecute = true;
             startInfo.CreateNoWindow = false;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
             extractPacked.WaitForExit();
         }
@@ -80,6 +81,7 @@ namespace SUC_Converter
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.CreateNoWindow = true;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
             while (!extractPacked.HasExited)
             {
@@ -97,6 +99,7 @@ namespace SUC_Converter
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.CreateNoWindow = false;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
             extractPacked.WaitForExit();
         }
@@ -123,6 +126,8 @@ namespace SUC_Converter
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.CreateNoWindow = false;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
             Process? extractPacked = Process.Start(startInfo);
 
             //assetcc2 --rules4101 output/%%f asset-cced/%%f
@@ -138,6 +143,7 @@ namespace SUC_Converter
             startInfo2.UseShellExecute = false;
             startInfo2.RedirectStandardOutput = true;
             startInfo2.CreateNoWindow = false;
+            startInfo2.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked2 = Process.Start(startInfo2);
             extractPacked2.WaitForExit();
             Thread.Sleep(100);
@@ -168,8 +174,8 @@ namespace SUC_Converter
         public static String GetFullPathWithoutExtensionPastPoint(String path, string find = ".ar")
         {
             string path2 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileNameWithoutExtension(path));
-
-            return path.Split(find)[0];
+            string toreturn = path.Split(find)[0];
+            return toreturn;
         }       
         public static void ClearFolder(string FolderName)
         {
@@ -200,6 +206,7 @@ namespace SUC_Converter
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.CreateNoWindow = true;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
             extractPacked.WaitForExit();
             if (File.Exists(Path.Combine(ProgramPath, Path.GetFileName(path))))
@@ -211,8 +218,11 @@ namespace SUC_Converter
         public static string AddQuotesIfRequired(string path)
         {
             path = path.Replace("\"", "");
-            path = path.Insert(0, "\"");
-            path = path.Insert(path.Length, "\"");
+            if(path.Contains(" "))
+            {
+                path = path.Insert(0, "\"");
+                path = path.Insert(path.Length, "\"");
+            }
             return path;
         }
         public static void CreateDirectoryIfNotExist(string path)
@@ -247,6 +257,7 @@ namespace SUC_Converter
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @Path.Combine(ProgramPath, "ar0pack.exe");
             startInfo.Arguments = path;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
             while (!extractPacked.HasExited)
             {
@@ -259,6 +270,7 @@ namespace SUC_Converter
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @Path.Combine(ProgramPath, "ar0unpack.exe");
             startInfo.Arguments = path;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
             extractPacked.WaitForExit();
             while (!extractPacked.HasExited)
@@ -274,6 +286,7 @@ namespace SUC_Converter
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @Path.Combine(ProgramPath, "matfixer.exe");
             startInfo.Arguments = path;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
             extractPacked.WaitForExit();
 

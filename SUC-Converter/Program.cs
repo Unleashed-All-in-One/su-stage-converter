@@ -5,15 +5,18 @@ using System.Drawing;
 using System.Threading;
 using System.Media;
 using SUC_Converter;
+using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
+using SUC_Converter.Windows;
 
 static class Program
 {
     static int origRow;
     static int origCol;
-    static string pathToStageArchive;
-    static string pathToSetArchive;
-    static string pathToStagePfd;
-    static string pathToStagePfdAdd;
+    public static string pathToStageArchive;
+    public static string pathToSetArchive;
+    public static string pathToStagePfd;
+    public static string pathToStagePfdAdd;
 
 
     static string m_FolderStage;
@@ -44,12 +47,12 @@ static class Program
                 for (int i = 0; i < 100; i++)
                 {
                     string pathToNumberedArchive = $"{filenameWithoutExtension}.ar.{i.ToString("D2")}";
-                    //Does archive.ar.[i] exist?
+                    //Does archive.ar. exist?
                     if (File.Exists(pathToNumberedArchive))
                     {
                         if (shouldExit)
                         {
-                            Utility.ColoredTextLine("[W] One of the ar numbered files is missing. This may cause ar0unpacker to unpack nothing.", ConsoleColor.Yellow, ConsoleColor.Black);
+                            OutputLog.Log("One of the ar numbered files is missing. This may cause ar0unpacker to unpack nothing.");
                         }
 
                         File.Copy(@pathToNumberedArchive, Path.Combine(destination, Path.GetFileName(@pathToNumberedArchive)));
@@ -95,9 +98,12 @@ static class Program
                 Utility.ExtractAR(@firstFileOutputPath);
         }
     }
+    [STAThread]
     static void Main()
     {
-        Startup();
+        System.Windows.Forms.Application.EnableVisualStyles();
+        System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+        System.Windows.Forms.Application.Run(new MainWindow());
     }
     public static void Startup()
     {
@@ -145,7 +151,6 @@ static class Program
                 }
             case "5":
                 {
-                    SubtitleConverter.Run();
                     break;
                 }
             default:
@@ -286,7 +291,7 @@ static class Program
         Utility.EndScreen("Stage has been converted successfully!", "NOTE: Now that you've run this, you need to go in GLVL 0.5.7 (NOT SVN), do File > Fix all materials in folder and pick the packed stage folder, then open the stage and repack with visibility tree ticked off.\r\nDo note that Spagonia levels may have a \"Stage_old\" XML which is actually the Stage xml, copy the contents of the _old to the regular one.\r\nPress any key to close, or R to go back to the start...\r\n", Utility.FilesDirectory);
     }
 
-    private static void MatFixer()
+    public static void MatFixer()
     {
         IEnumerable<FileInfo> files = new DirectoryInfo(m_FolderNewHashtag).EnumerateFiles();
         foreach(var f in files)
@@ -317,7 +322,7 @@ static class Program
             Utility.OpenFolder(Utility.FilesDirectory);
     }
 
-    private static void Cleanup(bool cleanOriginal = true)
+    public static void Cleanup(bool cleanOriginal = true)
     {
         if (Directory.Exists(m_FolderStage))
             Directory.Delete(m_FolderStage, true);
@@ -348,45 +353,45 @@ static class Program
         }
     }
 
-    private static void RepackEverything()
+    public static void RepackEverything()
     {
-        Console.WriteLine($"[i] Repacking pfd...");
+        OutputLog.Log($"Repacking pfd...");
         Utility.pfdPack(m_FolderStagePFD);
 
         if(!string.IsNullOrEmpty(m_FolderStagePFDAdd))
         {
-            Console.WriteLine($"[i] Repacking Add pfd...");
+            OutputLog.Log($"Repacking Add pfd...");
             Utility.pfdPack(m_FolderStagePFDAdd);
         }
 
          
-        Console.WriteLine($"[i] Moving pfi to {m_FolderNewStage}...");
+        OutputLog.Log($"Moving pfi to {m_FolderNewStage}...");
         File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfi"), Path.Combine(m_FolderNewStage, "Stage.pfi"));
         if (File.Exists(Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")))
             File.Move(Utility.AddQuotesIfRequired(@Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")), Utility.AddQuotesIfRequired(@Path.Combine(m_FolderNewStage, "Stage-Add.pfi")));
 
-        Console.WriteLine($"[i] Moving pfd to Packed...");
+        OutputLog.Log($"Moving pfd to Packed...");
         File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfd"), Path.Combine(Directory.GetParent(m_FolderNewStage).FullName, "Stage.pfd"));
         if(File.Exists(Path.Combine(Utility.FilesDirectory, "Stage-Add.pfd")))
             File.Move(Path.Combine(Utility.FilesDirectory, "Stage-Add.pfd"), Path.Combine(Directory.GetParent(m_FolderNewStage).FullName, "Stage-Add.pfd"));
-        Console.WriteLine($"[i] Repacking {m_FolderNewStage}...");
+        OutputLog.Log($"Repacking {m_FolderNewStage}...");
         Utility.PackAR(m_FolderNewStage);
 
-        Console.WriteLine($"[i] Repacking {m_FolderNewHashtag}...");
+        OutputLog.Log($"Repacking {m_FolderNewHashtag}...");
         Utility.PackAR(m_FolderNewHashtag);
     }
 
-    private static void UncompressPFD()
+    public static void UncompressPFD()
     {
         var files = Directory.EnumerateFiles(m_FolderStagePFD);
         foreach(var f in files)
         {
-            Console.WriteLine($"[i] Decompressing {f}...");
+            OutputLog.Log($"Decompressing {f}...");
             Utility.xbdecompress(f);
         }
     }
 
-    private static void MakeNewHashtagFolderContents()
+    public static void MakeNewHashtagFolderContents()
     {
         //awful, i just didnt want to rewrite this part of the old code since its the only thing that actually worked
         string XMLStart = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n<Stage xsi:noNamespaceSchemaLocation=\"http://web/chao/project/swa/schema/Stage.stg.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
@@ -436,7 +441,7 @@ static class Program
             }
             else if (stageString.Contains("</Instancer>"))
             {
-                Console.WriteLine($"Deleted \"{stageString}\"");
+                OutputLog.Log($"Deleted \"{stageString}\"");
                 includeInInstancer = false;
                 newTerrainFile += $"\n{stageString}";
                 newStageXML.Remove(stageString);
@@ -447,13 +452,13 @@ static class Program
 
             if (includeInTerrain)
             {
-                Console.WriteLine($"Deleted \"{stageString}\"");
+                OutputLog.Log($"Deleted \"{stageString}\"");
                 newTerrainFile += $"\n{stageString}";
                 newStageXML.Remove(stageString);
             }
             if (includeInInstancer)
             {
-                Console.WriteLine($"Deleted \"{stageString}\"");
+                OutputLog.Log($"Deleted \"{stageString}\"");
                 newInstancerFile += $"\n{stageString}";
                 newStageXML.Remove(stageString);
 
@@ -470,7 +475,7 @@ static class Program
         File.WriteAllText(Path.Combine(m_FolderHashtag, "Instancer.stg.xml").Replace("\"", ""), newInstancerFile);
         File.WriteAllText(Path.Combine(m_FolderHashtag, "Stage.stg.xml").Replace("\"", ""), string.Join("\n", newStageXML.ToArray()));
 
-        Utility.ColoredTextLine("[W] IT'S REALLY IMPORTANT THAT YOU ENSURE THE BGM CSB EXISTS! If it doesn't, the game will crash.", ConsoleColor.Yellow, ConsoleColor.Black);
+        OutputLog.Log("IT'S REALLY IMPORTANT THAT YOU ENSURE THE BGM CSB EXISTS! If it doesn't, the game will crash.", OutputLog.Severity.Warning);
         //replace every xml with the unleashed ones except for stage.stg
 
         IEnumerable<FileInfo> files = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".xml");
@@ -486,19 +491,19 @@ static class Program
         IEnumerable<FileInfo> filesHKX = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".hkx");
         foreach(var f in filesHKX)
         {
-            Console.WriteLine($"[i] Converting {f.Name} from Havok-5.5.0-r1 to hk_2010.2.0-r1...");
+            OutputLog.Log($" Converting {f.Name} from Havok-5.5.0-r1 to hk_2010.2.0-r1...");
             Utility.hkxconverter(f.FullName);
             Thread.Sleep(200);
             File.Move(f.FullName, Path.Combine(m_FolderNewHashtag, f.Name));
         }
     }
-    private static void MoveStageToBBStyleFolder()
+    public static void MoveStageToBBStyleFolder()
     {
         var newStageFolderPacked = Path.Combine(Utility.FilesDirectory, "Packed", m_StageID, m_StageID);
         var stageFilesExceptHKX = Directory.GetFiles(m_FolderStage).Where(name => !name.EndsWith(".hkx", StringComparison.OrdinalIgnoreCase));
         var stageFilesHKX = Directory.GetFiles(m_FolderStage).Where(name => name.EndsWith(".hkx", StringComparison.OrdinalIgnoreCase));
         //Move all files that arent HKXs to the new stage folder
-        Console.WriteLine($"[i] Moving files from unpacked archive folder to {newStageFolderPacked}...");
+        OutputLog.Log($"Moving files from unpacked archive folder to {newStageFolderPacked}...");
         foreach (var f in stageFilesExceptHKX)
         {
 
@@ -508,7 +513,7 @@ static class Program
         //Convert all leftover HKX files and move them as well
         foreach (var f in stageFilesHKX)
         {
-            Console.WriteLine($"[i] Converting {Path.GetFileName(f)} from Havok-5.5.0-r1 to hk_2010.2.0-r1...");
+            OutputLog.Log($"Converting {Path.GetFileName(f)} from Havok-5.5.0-r1 to hk_2010.2.0-r1...");
             Utility.hkxconverter(f);
             Thread.Sleep(100);
             string newPath = Path.Combine(newStageFolderPacked, Path.GetFileName(f));
@@ -516,15 +521,16 @@ static class Program
         }
         m_FolderNewStage = newStageFolderPacked;
     }
-    private static void MoveFilesToCorrectLocations()
+    public static void MoveFilesToCorrectLocations()
     {
         m_FolderNewHashtag = @Path.Combine(Utility.FilesDirectory, $"#{m_StageID}");
+        OutputLog.Log("Cloning Set archive from template...");
         Utility.CloneDirectory(@Path.Combine(Utility.ProgramPath, "TemplateHashtag"), m_FolderNewHashtag); 
         //Copy files from #stage to stage
         var fromHashtag_toStage = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".gil", ".gi-texture-group-info", ".light", ".light-list", ".tbst", ".terrain", ".terrain-group");
         foreach(var f in fromHashtag_toStage)
         {
-            Console.WriteLine($"[i] Copying \"{f.Name}\" to stage archive...");
+            OutputLog.Log($" Copying \"{f.Name}\" to stage archive...");
             string newLoc = Path.Combine(Utility.FilesDirectory, m_FolderStage, f.Name);
             File.Move(f.FullName, newLoc);
         }
@@ -534,11 +540,11 @@ static class Program
         //This'll become an archive
         Utility.CreateDirectoryIfNotExist(Path.Combine(Utility.FilesDirectory, "Packed", $"{m_StageID}", $"{m_StageID}"));        
     }
-    private static void CopyArchivesToProgram()
+    public static void CopyArchivesToProgram()
     {
         if (!Directory.Exists(Utility.FilesDirectory))
             Directory.CreateDirectory(Utility.FilesDirectory);
-        Utility.ColoredTextLine("[1] Copying files from original folders to \"Output\"", ConsoleColor.Gray, ConsoleColor.Black);
+        OutputLog.Log("Copying and extracting files from original folders to \"Output\" folder... This may take a while.");
         CopyAndExtractAR(@pathToStageArchive, Utility.FilesDirectory);
         CopyAndExtractAR(@pathToSetArchive, Utility.FilesDirectory);
         CopyAndExtractAR(@pathToStagePfd, Utility.FilesDirectory, false);
@@ -552,8 +558,9 @@ static class Program
         if (File.Exists(@pathToStagePfdAdd))
             m_FolderStagePFDAdd = Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfdAdd).Split(".pfd")[0]);
     }
-    private static void CleanupLastTry()
+    public static void CleanupLastTry()
     {
+        OutputLog.Log("Cleaning last attempt...");
         string directoryPath = Utility.FilesDirectory;
         if (!Directory.Exists(directoryPath))
             return;

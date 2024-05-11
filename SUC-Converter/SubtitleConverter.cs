@@ -78,7 +78,7 @@ namespace SUC_Converter
 
         private string cellField;
 
-        
+
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -126,6 +126,11 @@ namespace SUC_Converter
 
     internal class SubtitleConverter
     {
+        static Caption newBBSubtitlesNode = new Caption();
+        public static string cutsceneID;
+        public static string pathFcoUnleashed;
+        public static string pathFcoGens;
+        public static string pathInspireSubtitle;
         //for context, i cant use constructors or xmlserializer will scream at me
         public static CaptionText CreateCaptionText(int start, int lenght, string cellName)
         {
@@ -139,17 +144,14 @@ namespace SUC_Converter
         {
             return file.ResourceInfo.First(x => x.ID == id);
         }
-        public static void Run()
+
+        public static Caption GetAndConvertFile()
         {
-            Console.WriteLine("Enter path to the subtitle xml (Inspire/subtitle/[eventid].ar/[eventid]_subtitle_English.inspire_resource.xml");
-            string path = Console.ReadLine();
-            Console.WriteLine("Enter path to the FCO");
-            string pathFCO = Console.ReadLine();
-            Console.WriteLine("What's the conversion cutscene id for this specific cutscene?");
-            string eventName = Console.ReadLine();
+            string path = pathInspireSubtitle;
+            string pathFCO = pathFcoUnleashed;
             SUC_ConverterConverse.InspireResource resourceSWA = new SUC_ConverterConverse.InspireResource();
-            path = path.Replace("\"", "");
-            pathFCO = pathFCO.Replace("\"", "");
+            path = Utility.AddQuotesIfRequired(path);
+            pathFCO = Utility.AddQuotesIfRequired(pathFCO);
             XmlSerializer serializer = new XmlSerializer(typeof(SUC_ConverterConverse.InspireResource));
             using (StreamReader reader = new StreamReader(@path))
             {
@@ -160,48 +162,44 @@ namespace SUC_Converter
 
             int zeroFrameCount = 0;
             int lastFrameStart = -1;
-            Caption newBBSubtitlesNode = new Caption();
+
             foreach (var f in resourceSWA.TriggerInfo)
             {
                 if (f.Frame.Start == lastFrameStart || f.Frame.Start == 0)
                 {
-                    Console.WriteLine($"There may be an unused entry or a duplicate one at frame {lastFrameStart}. Ignoring.");
+                    OutputLog.Log($"There may be an unused entry or a duplicate one at frame {lastFrameStart}. Ignoring.");
                     continue;
                 }
-                if(string.IsNullOrEmpty(fcoData.GetStringDataFromCellName(GetResourceFromID(resourceSWA, f.ResourceID).Param.CellIDName)))
+                if (string.IsNullOrEmpty(fcoData.GetStringDataFromCellName(GetResourceFromID(resourceSWA, f.ResourceID).Param.CellIDName)))
                 {
-                    Console.WriteLine($"Blank FCO entry.");
+                    OutputLog.Log($"Blank FCO entry.");
                     continue;
                 }
-                Console.WriteLine($"SWA value: (Start: {f.Frame.Start}, End:{f.Frame.End}) | BB Value: (Start: {f.Frame.Start}, Length: {f.Frame.End - f.Frame.Start}). #ResourceID: {f.ResourceID}");
+                OutputLog.Log($"SWA value: (Start: {f.Frame.Start}, End:{f.Frame.End}) | BB Value: (Start: {f.Frame.Start}, Length: {f.Frame.End - f.Frame.Start}). #ResourceID: {f.ResourceID}");
                 lastFrameStart = f.Frame.Start;
                 newBBSubtitlesNode.Text.Add(CreateCaptionText(f.Frame.Start, f.Frame.End - f.Frame.Start, $"Subtitle{newBBSubtitlesNode.Text.Count.ToString("D2")}"));
             }
-            Console.WriteLine("Do you want to type in the fco entries for automatic generation? (Y/n)");
-            string choice = Console.ReadLine();
-            List<string> stringsForFco = new List<string>();
-            if(choice.ToLower() == "y")
-            {
-                string argumentForFco = "";
-                for (int i = 0; i < newBBSubtitlesNode.Text.Count; i++)
-                {
-                    Console.WriteLine($"Enter a line for {i} (or type \"quit\" to exit):");
-                    string newline = Console.ReadLine();
-                    if (newline.ToLower() == "quit")
-                        break;
-                    stringsForFco.Add(newline);
-                    argumentForFco += $"-add \"{eventName}\" \"{newBBSubtitlesNode.Text[i].Cell}\" \"{newline}\" ";
-                }
+            return newBBSubtitlesNode;
+        }
 
-                Console.WriteLine("Enter path to the Subtitle_Cnv.fco file (ActionCommon in Gens)");
-                string pathFCOGens = Console.ReadLine();
-                pathFCOGens = pathFCOGens.Replace("\"", "");
-                pathFCOGens = pathFCOGens.Insert(0, "\"");
-                pathFCOGens = pathFCOGens.Insert(pathFCOGens.Length, "\"");
-                Utility.fcoEditorCommandline(pathFCOGens, argumentForFco);
+        public static void CreateFCO(List<SubtitleContainer> containers)
+        {
+            List<string> stringsForFco = new List<string>();
+
+            string argumentForFco = "";
+            for (int i = 0; i < newBBSubtitlesNode.Text.Count; i++)
+            {
+                argumentForFco += $"-add \"{cutsceneID}\" \"{newBBSubtitlesNode.Text[i].Cell}\" \"{containers[i].SubtitleText}\" ";
             }
-            newBBSubtitlesNode.Name = eventName;
-            newBBSubtitlesNode.Group = eventName;
+
+            string pathFCOGens = pathFcoGens;
+            pathFCOGens = pathFCOGens.Replace("\"", "");
+            pathFCOGens = pathFCOGens.Insert(0, "\"");
+            pathFCOGens = pathFCOGens.Insert(pathFCOGens.Length, "\"");
+            Utility.fcoEditorCommandline(pathFCOGens, argumentForFco);
+
+            newBBSubtitlesNode.Name = cutsceneID;
+            newBBSubtitlesNode.Group = cutsceneID;
             string output = "";
             XmlSerializer serializer2 = new XmlSerializer(typeof(Caption));
             using (var fileStream = new StringWriter())
@@ -210,6 +208,8 @@ namespace SUC_Converter
                 output = fileStream.ToString();
             }
             output = output.Replace("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" ", "");
+            MessageBox.Show("Conversion has finished, you now have to open the EventCaption file in ActionCommon and paste in the Caption node, it has been copied to the clipboard.");
+            Clipboard.SetText(output);
             Utility.ColoredTextLine(output, ConsoleColor.Blue, ConsoleColor.Black);
         }
     }

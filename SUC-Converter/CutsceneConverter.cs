@@ -18,7 +18,11 @@ namespace SUC_Converter
         static List<string> namesForPathArchives = new List<string>();
         static SUC_Converter.InspireResource inspireSource;
         static string outXML_Filename;
-        static string evs_ID;
+        public static string evs_ID;
+        public static string stageID;
+        public static string archivePath;
+        public static string cueSheet;
+        public static string cueName;
         static string directoryOutput
         {
             get
@@ -33,8 +37,6 @@ namespace SUC_Converter
             //Has the file been copied before?
             if (!File.Exists(pathC))
             {
-
-
                 string firstFileOutputPath = Path.Combine(destination, Path.GetFileName(pathToFirst));
                 string filenameWithoutExtension = Utility.GetFullPathWithoutExtensionPastPoint(pathToFirst, isArchive ? ".ar" : ".pfd");
                 bool shouldExit = false;
@@ -108,43 +110,56 @@ namespace SUC_Converter
         }
         public static void Start()
         {
-            Console.Clear();
-            Utility.ColoredTextLine("Clearing last attempt...", ConsoleColor.DarkGray, ConsoleColor.Black);
+            OutputLog.Log("Clearing last attempt...");
             if (Directory.Exists(Utility.CutscenesFilesDirectory))
                 Directory.Delete(Utility.CutscenesFilesDirectory, true);
             if (!Directory.Exists(Utility.CutscenesFilesDirectory))
                 Directory.CreateDirectory(Utility.CutscenesFilesDirectory);
             if (!Directory.Exists(directoryOutput))
                 Directory.CreateDirectory(directoryOutput);
-            Console.Clear();
-            Utility.ColoredTextLine("CutsceneConverter", ConsoleColor.Black, ConsoleColor.White);
-            Utility.ColoredTextLine("This tool will attempt to convert an Inspire cutscene to an EVS format so that Generations can play them back.", ConsoleColor.White, ConsoleColor.Black);
-            Utility.ColoredTextLine("NOTE: For some reason, some objects may crash the game because of invalid/missing materials and animations, if the cutscene crashes, make sure you have everything, and if it still crashes then try to strip down the \"Object\" values in the ev(ID).xml file and convert it to evs again using EVSXML.\n", ConsoleColor.Black, ConsoleColor.Blue);
-            Utility.ColoredTextLine("Path to cutscene archive (Inspire\\scene\\m_xxxxx.ar): ", ConsoleColor.Black, ConsoleColor.White);
-            string path = Console.ReadLine();
-            string pathWithoutQuotes = path.Replace("\"", "");
+
+            string pathWithoutQuotes = archivePath.Replace("\"", "");
+            OutputLog.Log("Extracting archives... This may take a while.");
             CopyAndExtractAR(@pathWithoutQuotes, directoryOutput, true);
-            var f = Directory.EnumerateFiles(Path.Combine(directoryOutput, Path.GetFileName(Utility.GetFullPathWithoutExtensionPastPoint(@pathWithoutQuotes))));
-            foreach (var f2 in f)
+            string pathForEnumeration = Path.Combine(directoryOutput, Path.GetFileName(Utility.AddQuotesIfRequired(Utility.GetFullPathWithoutExtensionPastPoint(@pathWithoutQuotes))));
+            var filesInExtractedArchive = Directory.EnumerateFiles(pathForEnumeration);
+            if(filesInExtractedArchive.Count() == 0)
             {
-                if (f2.Contains(".inspire_resource.xml") && !f2.Contains("bgm") && !f2.Contains("voice"))
+                OutputLog.Log("Missing files from archive, extraction failed or the archive is compressed.", OutputLog.Severity.Error);
+                MessageBox.Show("No files found from extracted archive, the archive may be compressed or invalid.");
+                return;
+            }
+            foreach (var singularFile in filesInExtractedArchive)
+            {
+
+                if (singularFile.Contains(".inspire_resource.xml") && !singularFile.Contains("bgm") && !singularFile.Contains("voice"))
                 {
-                    Utility.ColoredTextLine($"Found inspire_resource file: \"{Path.GetFileName(f2)}\".", ConsoleColor.DarkGray, ConsoleColor.Black);
-                    ConvertInspireToEVS(f2);
+                    OutputLog.Log($"Found inspire_resource file: \"{Path.GetFileName(singularFile)}\".");
+                    ConvertInspireToEVS(singularFile);
                     break;
                 }
             }
             Utility.evs2xml(outXML_Filename);
 
-            Utility.ColoredTextLine($"\nYou have to find these following model files yourself:", ConsoleColor.Blue, ConsoleColor.Black);
+            //Warn user if there are models that are missing from the archive
+            string messageMissingModels = "";
+            int missingModels = 0;
             foreach (var e in namesForPathArchives)
             {
                 string test3 = Path.Combine(Directory.GetParent(outXML_Filename).FullName, e + ".model");
                 if (!File.Exists(test3))
-                    Console.WriteLine($"     {e}");
+                {
+                    missingModels++;
+                    messageMissingModels += $"     {e}\n";
+                }
             }
-            Utility.ColoredTextLine($"Once you've done that and you've dragged the required files into {Directory.GetParent(outXML_Filename).FullName}, press any key.", ConsoleColor.Blue, ConsoleColor.Black);
-            Console.ReadKey();
+            if(missingModels > 0)
+            {
+                messageMissingModels = messageMissingModels.Insert(0, "There are models mentioned that do not currently exist in the cutscene archive:\n");
+                messageMissingModels += $"If you want you can add them to the folder now, they'll be processed to work with Generations.\nOpen the following path and drag the files there:\n{Directory.GetParent(outXML_Filename).FullName}";
+                MessageBox.Show(messageMissingModels);
+            }
+            
             string folderOut = Path.Combine(Utility.CutscenesFilesDirectory, evs_ID);
             Directory.Move(Directory.GetParent(outXML_Filename).FullName, Path.Combine(Utility.CutscenesFilesDirectory, evs_ID));
             var filesOut = Directory.EnumerateFiles(folderOut);
@@ -153,19 +168,21 @@ namespace SUC_Converter
             {
                 if (file.EndsWith(".hkx"))
                 {
-                    Console.WriteLine($"[i] Converting HKX \"{Path.GetFileName(file)}\" and resaving meta...");
+                    OutputLog.Log($"Converting HKX \"{Path.GetFileName(file)}\" and resaving meta...");
                     Utility.hkxconverter(file);
                 }
                 if (file.EndsWith(".material"))
                 {
-                    Console.WriteLine($"[i] Running Unleashed2Generations on \"{Path.GetFileName(file)}\"...");
+                    OutputLog.Log($"Running Unleashed2Generations on \"{Path.GetFileName(file)}\"...");
                     Utility.matfixer(file);
                 }
             }
-            Console.Write("[i] Repacking AR...");
+            OutputLog.Log("Repacking Archives...");
             Utility.PackAR(folderOut);
-            Utility.EndScreen("Cutscene has been converted successfully!", "The cutscene may crash because of invalid animations, please check that your animation files exist.\nIf you want to get rid of shader errors, use SUC-ShaderConverter.", Directory.GetParent(folderOut).FullName);
-                       //foreach (var e in namesForPathArchives)
+
+            OutputLog.Log("Conversion done. If the cutscene crashes then it means there's either a missing material, shader, or model/skeleton.");
+            //Utility.EndScreen("Cutscene has been converted successfully!", "The cutscene may crash because of invalid animations, please check that your animation files exist.\nIf you want to get rid of shader errors, use SUC-ShaderConverter.", Directory.GetParent(folderOut).FullName);
+            //foreach (var e in namesForPathArchives)
             //{
             //    Console.WriteLine($"Please enter the path to an archive containing \"{e}\"");
             //    string outs = Console.ReadLine();
@@ -196,24 +213,18 @@ namespace SUC_Converter
             {
                 inspireSource = (SUC_Converter.InspireResource)(serializer.Deserialize(reader));
             }
-            Utility.ColoredTextLine("Enter evsID for cutscene (default: ev031):", ConsoleColor.Black, ConsoleColor.White);
-            evs_ID = Console.ReadLine();
             if (string.IsNullOrEmpty(evs_ID))
                 evs_ID = "ev031";
 
-            Utility.ColoredTextLine("Enter stageID for the cutscene (default: cpz200):", ConsoleColor.Black, ConsoleColor.White);
-            string stageID = Console.ReadLine();
+            
             if (string.IsNullOrEmpty(stageID))
                 stageID = "cpz200";
 
-            Utility.ColoredTextLine("Enter sound cue sheet (default: 30VCE_STE): ", ConsoleColor.Black, ConsoleColor.White);
-            string soundCueSheet = Console.ReadLine();
-            if(string.IsNullOrEmpty(soundCueSheet))
+            if(string.IsNullOrEmpty(cueSheet))
             {
-                soundCueSheet = "30VCE_STE";
+                cueSheet = "30VCE_STE";
             }
 
-            Utility.ColoredTextLine($"Enter sound cue (default: {evs_ID}):", ConsoleColor.Black, ConsoleColor.White);
             string soundCue = Console.ReadLine();
             if(string.IsNullOrEmpty(soundCue))
             {
@@ -231,7 +242,7 @@ namespace SUC_Converter
             evsOutput.Wait.After = 30;
 
             evsOutput.Sound = new SceneSound();
-            evsOutput.Sound.CueSheet = soundCueSheet;
+            evsOutput.Sound.CueSheet = cueSheet;
             evsOutput.Sound.Cue = soundCue;
             evsOutput.Sound.Localize = true;
 
@@ -356,8 +367,8 @@ namespace SUC_Converter
             evsOutput.Shadow.Set = shadows.ToArray();
             evsOutput.Object = objects.ToArray();
             XmlSerializer serializer2 = new XmlSerializer(typeof(Scene));
-            var newPath = Directory.GetParent(path);
-            var path2 = Path.Combine(newPath.FullName, $"{evs_ID}.xml");
+            DirectoryInfo? newPath = Directory.GetParent(path);
+            string path2 = Path.Combine(newPath.FullName, $"{evs_ID}.xml");
             using (var fileStream = new FileStream(path2, FileMode.Create))
             {
                 serializer2.Serialize(fileStream, evsOutput);
