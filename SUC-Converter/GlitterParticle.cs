@@ -809,6 +809,25 @@ namespace SUC_Converter
                 this.typeField = value;
             }
         }
+
+        public EffectEmitter()
+        {
+            StartTime = new EffectEmitterStartTime();
+            LifeTime = new EffectEmitterLifeTime();
+            LoopStartTime = new EffectEmitterLoopStartTime();
+            LoopEndTime = new EffectEmitterLoopEndTime();
+            Translation = new EffectEmitterTranslation();
+            Rotation = new EffectEmitterRotation();
+            RotationAdd = new EffectEmitterRotationAdd();
+            RotationAddRandom = new EffectEmitterRotationAddRandom();
+            Scaling = new EffectEmitterScaling();
+            EmitCondition = new EffectEmitterEmitCondition();
+            DirectionType = new EffectEmitterDirectionType();
+            EmissionInterval = new EffectEmitterEmissionInterval();
+            ParticlePerEmission = new EffectEmitterParticlePerEmission();
+            Size = new EffectEmitterSize();
+            Flags = new EffectEmitterFlags();
+        }
     }
 
     /// <remarks/>
@@ -1578,6 +1597,7 @@ namespace SUC_Converter
     public partial class EffectParticle
     {
 
+
         private EffectParticleLifeTime lifeTimeField;
 
         private EffectParticlePivotPosition pivotPositionField;
@@ -1679,6 +1699,48 @@ namespace SUC_Converter
         private string nameField;
 
         private string typeField;
+
+        public EffectParticle()
+        {            
+            LifeTime = new EffectParticleLifeTime();
+            PivotPosition = new EffectParticlePivotPosition     ();
+            DirectionType = new EffectParticleDirectionType();
+            ZOffset = new EffectParticleZOffset();
+            Size = new EffectParticleSize();
+            SizeRandom = new EffectParticleSizeRandom();
+            Rotation = new EffectParticleRotation();
+            RotationRandom = new EffectParticleRotationRandom();
+            RotationAdd = new EffectParticleRotationAdd();
+            RotationAddRandom = new EffectParticleRotationAddRandom();
+            Direction = new EffectParticleDirection();
+            DirectionRandom = new EffectParticleDirectionRandom();
+            Speed = new EffectParticleSpeed();
+            SpeedRandom = new EffectParticleSpeedRandom();
+            GravitationalAccel = new EffectParticleGravitationalAccel();
+            ExternalAccel = new EffectParticleExternalAccel();
+            ExternalAccelRandom = new EffectParticleExternalAccelRandom();
+            Deceleration = new EffectParticleDeceleration();
+            DecelerationRandom = new EffectParticleDecelerationRandom();
+            ReflectionCoeff = new EffectParticleReflectionCoeff();
+            ReflectionCoeffRandom = new EffectParticleReflectionCoeffRandom();
+            ReboundPlaneY = new EffectParticleReboundPlaneY();
+            MaxCount = new EffectParticleMaxCount();
+            Color = new EffectParticleColor();
+            TextureIndex = new EffectParticleTextureIndex();
+            UvIndexType = new EffectParticleUvIndexType();
+            UvIndex = new EffectParticleUvIndex();
+            UvChangeInterval = new EffectParticleUvChangeInterval();
+            ColorScroll = new EffectParticleColorScroll();
+            ColorScrollRandom = new EffectParticleColorScrollRandom();
+            ColorScrollSpeed = new EffectParticleColorScrollSpeed();
+            AlphaScroll = new EffectParticleAlphaScroll();
+            AlphaScrollRandom = new EffectParticleAlphaScrollRandom();
+            AlphaScrollSpeed = new EffectParticleAlphaScrollSpeed();
+            
+            Material = new EffectParticleMaterial();
+            
+            Flags = new EffectParticleFlags();
+        }
 
         /// <remarks/>
         public EffectParticleLifeTime LifeTime

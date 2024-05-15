@@ -28,6 +28,10 @@ namespace SUC_Converter
 
             Effect Effect = new Effect();
             Effect.Name = resourceSparkle.EffectSaveLoad.EffectName;
+            Effect.StartTime = new EffectStartTime();
+            Effect.StartTime.Value = 0;
+            Effect.Flags = new EffectFlags();
+            Effect.Flags.Value = 1;
             Effect.LifeTime = new EffectLifeTime();
             Effect.LifeTime.Value = resourceSparkle.EffectSaveLoad.InitialLifeTime;
             //Effect. = resourceSparkle.EffectSaveLoad.;
@@ -54,7 +58,10 @@ namespace SUC_Converter
                 EffectEmitter gensEmitter = new EffectEmitter();
                 gensEmitter.ParticlePerEmission = new EffectEmitterParticlePerEmission();
                 gensEmitter.ParticlePerEmission.Value = emitter.MaxGenerateCount;
-
+                gensEmitter.StartTime = new EffectEmitterStartTime();
+                gensEmitter.StartTime.Value = emitter.EmitStartTime;
+                gensEmitter.LifeTime = new EffectEmitterLifeTime();
+                gensEmitter.LifeTime.Value = emitter.InitialEmitterLifeTime;
                 gensEmitter.EmissionInterval = new EffectEmitterEmissionInterval();
                 gensEmitter.EmissionInterval.Value = (byte)(((float)emitter.InitialEmittionGap) * 60.0f);
 
@@ -74,6 +81,7 @@ namespace SUC_Converter
                 gensEmitter.RotationAddRandom.Y = emitter.RotationXYZBias.Y;
                 gensEmitter.RotationAddRandom.Z = emitter.RotationXYZBias.Z;
 
+                gensEmitter.DirectionType.Value = "ParentAxis";
                 gensEmitter.Rotation = new EffectEmitterRotation();
                 gensEmitter.Rotation.X = emitter.InitialRotation.X;
                 gensEmitter.Rotation.Y = emitter.InitialRotation.Y;
@@ -82,7 +90,7 @@ namespace SUC_Converter
                 gensEmitter.EmitCondition = new EffectEmitterEmitCondition();
                 gensEmitter.EmitCondition.Value = emitter.EmitCondition;
                 gensEmitter.Type = emitter.EmitterType;
-                switch(emitter.EmitterType)
+                switch (emitter.EmitterType)
                 {
                     case "Box":
                         {
@@ -147,7 +155,7 @@ namespace SUC_Converter
                 gensParticle.GravitationalAccel.X = particleSU.Gravity.X;
                 gensParticle.GravitationalAccel.Y = particleSU.Gravity.Y;
                 gensParticle.GravitationalAccel.Z = particleSU.Gravity.Z;
-
+                gensParticle.Material.Value = particleSU.MaterialName;
 
                 gensParticle.ExternalAccel = new EffectParticleExternalAccel();
                 gensParticle.ExternalAccel.X = particleSU.ExternalForce.X;
