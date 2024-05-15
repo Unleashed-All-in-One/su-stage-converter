@@ -46,9 +46,9 @@ static class Program
                 //Go through all possible extra archives, 100 because its unlikely archives will get bigger than that
                 for (int i = 0; i < 100; i++)
                 {
-                    string pathToNumberedArchive = $"{filenameWithoutExtension}.ar.{i.ToString("D2")}";
+                    string pathToNumberedArchive = $"{filenameWithoutExtension}.ar.{i.ToString("D2")}".Replace("\"", "");
                     //Does archive.ar. exist?
-                    if (File.Exists(pathToNumberedArchive))
+                    if (File.Exists(@pathToNumberedArchive))
                     {
                         if (shouldExit)
                         {
@@ -548,14 +548,14 @@ static class Program
         CopyAndExtractAR(@pathToStageArchive, Utility.FilesDirectory);
         CopyAndExtractAR(@pathToSetArchive, Utility.FilesDirectory);
         CopyAndExtractAR(@pathToStagePfd, Utility.FilesDirectory, false);
-        if(File.Exists(@pathToStagePfdAdd))
+        if(File.Exists(@pathToStagePfdAdd.Replace("\"", "")))
             CopyAndExtractAR(@pathToStagePfdAdd, Utility.FilesDirectory, false);
 
         m_FolderStage =     (Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStageArchive).Split(".ar")[0]));
         m_FolderHashtag =   (Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToSetArchive).Split(".ar")[0]));
         m_FolderStagePFD =  (Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfd).Split(".pfd")[0]));
 
-        if (File.Exists(@pathToStagePfdAdd))
+        if (File.Exists(@pathToStagePfdAdd.Replace("\"", "")))
             m_FolderStagePFDAdd = Path.Combine(Utility.FilesDirectory, Path.GetFileNameWithoutExtension(pathToStagePfdAdd).Split(".pfd")[0]);
     }
     public static void CleanupLastTry()

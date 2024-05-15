@@ -65,8 +65,9 @@
             button3.Name = "button3";
             button3.Size = new Size(115, 44);
             button3.TabIndex = 2;
-            button3.Text = "CSB Overlap Checker";
+            button3.Text = "Test";
             button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // button4
             // 

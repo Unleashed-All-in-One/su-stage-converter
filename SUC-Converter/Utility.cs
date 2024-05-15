@@ -83,9 +83,9 @@ namespace SUC_Converter
             startInfo.CreateNoWindow = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process? extractPacked = Process.Start(startInfo);
-            while (!extractPacked.HasExited)
-            {
-            }
+            while (!extractPacked.HasExited) { }
+
+            Thread.Sleep(200);
             extractPacked.WaitForExit();
         }
         public static void evs2xml(string path)

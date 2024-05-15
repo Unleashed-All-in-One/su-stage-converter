@@ -60,7 +60,7 @@ namespace SUC_Converter.Windows
         }
 
         private void StartPort_Click(object sender, EventArgs e)
-        {            
+        {
             if (isRunning)
                 return;
             progressBar1.Style = ProgressBarStyle.Marquee;
@@ -73,9 +73,9 @@ namespace SUC_Converter.Windows
             try
             {
                 Program.pathToStageArchive = Utility.AddQuotesIfRequired(pathToStageArchive);
-                Program.pathToSetArchive = Utility.AddQuotesIfRequired(pathToStageArchiveHashtag.Replace("\"", ""));
-                Program.pathToStagePfd = Utility.AddQuotesIfRequired(pathToPfd.Replace("\"", ""));
-                Program.pathToStagePfdAdd = Utility.AddQuotesIfRequired(pathToPfdAdd.Replace("\"", ""));
+                Program.pathToSetArchive = Utility.AddQuotesIfRequired(pathToStageArchiveHashtag);
+                Program.pathToStagePfd = Utility.AddQuotesIfRequired(pathToPfd);
+                Program.pathToStagePfdAdd = Utility.AddQuotesIfRequired(pathToPfdAdd);
                 Program.CleanupLastTry();
                 Program.CopyArchivesToProgram();
                 Program.MoveFilesToCorrectLocations();
@@ -162,6 +162,11 @@ namespace SUC_Converter.Windows
         }
 
         private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }

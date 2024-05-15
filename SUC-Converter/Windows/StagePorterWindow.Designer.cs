@@ -46,6 +46,8 @@
             progressBar1 = new ProgressBar();
             richTextBox1 = new RichTextBox();
             button1 = new Button();
+            label5 = new Label();
+            textBox1 = new TextBox();
             SuspendLayout();
             // 
             // ConsoleOutput
@@ -99,10 +101,10 @@
             // 
             // StartStagePortButton
             // 
-            StartStagePortButton.Location = new Point(12, 178);
+            StartStagePortButton.Location = new Point(11, 224);
             StartStagePortButton.Margin = new Padding(2);
             StartStagePortButton.Name = "StartStagePortButton";
-            StartStagePortButton.Size = new Size(302, 32);
+            StartStagePortButton.Size = new Size(302, 31);
             StartStagePortButton.TabIndex = 11;
             StartStagePortButton.Text = "Start";
             StartStagePortButton.UseVisualStyleBackColor = true;
@@ -215,22 +217,22 @@
             // 
             // progressBar1
             // 
-            progressBar1.Location = new Point(12, 152);
+            progressBar1.Location = new Point(11, 198);
             progressBar1.Margin = new Padding(2);
             progressBar1.MarqueeAnimationSpeed = 50;
             progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(302, 20);
+            progressBar1.Size = new Size(302, 19);
             progressBar1.Style = ProgressBarStyle.Continuous;
             progressBar1.TabIndex = 21;
             progressBar1.Click += progressBar1_Click;
             // 
             // richTextBox1
             // 
-            richTextBox1.Location = new Point(12, 226);
+            richTextBox1.Location = new Point(12, 278);
             richTextBox1.Margin = new Padding(2);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ReadOnly = true;
-            richTextBox1.Size = new Size(303, 284);
+            richTextBox1.Size = new Size(303, 232);
             richTextBox1.TabIndex = 22;
             richTextBox1.Text = resources.GetString("richTextBox1.Text");
             richTextBox1.TextChanged += richTextBox1_TextChanged;
@@ -246,11 +248,36 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // label5
+            // 
+            label5.Anchor = AnchorStyles.Top;
+            label5.AutoSize = true;
+            label5.Location = new Point(11, 162);
+            label5.Margin = new Padding(2, 0, 2, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(77, 15);
+            label5.TabIndex = 25;
+            label5.Text = "New Stage ID";
+            label5.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // textBox1
+            // 
+            textBox1.Anchor = AnchorStyles.Top;
+            textBox1.Location = new Point(108, 159);
+            textBox1.Margin = new Padding(2);
+            textBox1.Name = "textBox1";
+            textBox1.PlaceholderText = "ActD_Mykonos";
+            textBox1.Size = new Size(205, 23);
+            textBox1.TabIndex = 24;
+            textBox1.TextChanged += textBox1_TextChanged;
+            // 
             // StagePorterWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(610, 530);
+            Controls.Add(label5);
+            Controls.Add(textBox1);
             Controls.Add(button1);
             Controls.Add(richTextBox1);
             Controls.Add(progressBar1);
@@ -298,5 +325,7 @@
         private ProgressBar progressBar1;
         private RichTextBox richTextBox1;
         private Button button1;
+        private Label label5;
+        private TextBox textBox1;
     }
 }
