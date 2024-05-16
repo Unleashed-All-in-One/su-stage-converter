@@ -4090,6 +4090,16 @@ namespace SUC_Converter
 
         private string typeField;
 
+        public EffectParticleAnimation()
+        {
+            StartTime = new EffectParticleAnimationStartTime();
+            EndTime = new EffectParticleAnimationEndTime();
+            RepeatType = new EffectParticleAnimationRepeatType();
+            RandomFlags = new EffectParticleAnimationRandomFlags();
+            //Key = new EffectParticleAnimationKey(){0};
+            
+        }
+
         /// <remarks/>
         public EffectParticleAnimationStartTime StartTime
         {
@@ -4274,6 +4284,7 @@ namespace SUC_Converter
     public partial class EffectParticleAnimationKey
     {
 
+
         private EffectParticleAnimationKeyInterpolationType interpolationTypeField;
 
         private EffectParticleAnimationKeyInParam inParamField;
@@ -4285,6 +4296,16 @@ namespace SUC_Converter
         private float timeField;
 
         private float valueField;
+
+        public EffectParticleAnimationKey()
+        {
+            InterpolationType = new EffectParticleAnimationKeyInterpolationType();
+            InParam = new EffectParticleAnimationKeyInParam();
+            OutParam = new EffectParticleAnimationKeyOutParam();
+            RandomRange = new EffectParticleAnimationKeyRandomRange();
+            Time = 0;
+            Value = 0;
+        }
 
         /// <remarks/>
         public EffectParticleAnimationKeyInterpolationType InterpolationType

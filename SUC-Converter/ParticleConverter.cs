@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,104 @@ namespace SUC_Converter
         public static void Setup(string pathSU)
         {
             pathSparkle = Utility.AddQuotesIfRequired(pathSU);
+        }
+        public static EffectParticleAnimation GetAnimKeyframes(KeyFrameList keyFrameListKeyFrames, string easing, string animType)
+        {
+            EffectParticleAnimation animNew = new EffectParticleAnimation();
+            animNew.StartTime.Value = 0;
+            animNew.Type = animType;
+            animNew.RepeatType.Value = "Constant";
+            float lastTime = -1;
+            List<EffectParticleAnimationKey> keys = new List<EffectParticleAnimationKey>();
+            foreach (var frame in keyFrameListKeyFrames.KeyFrame)
+            {
+                if (animNew.StartTime.Value > lastTime)
+                    lastTime = animNew.StartTime.Value;
+                EffectParticleAnimationKey keyNew = new EffectParticleAnimationKey();
+                keyNew.Time = frame.Time * 60;
+                keyNew.Value = frame.Value;
+                keyNew.InterpolationType.Value = easing;
+                keyNew.InParam.Value = frame.SlopeL;
+                keyNew.OutParam.Value = frame.SlopeR;
+                
+                keys.Add(keyNew);
+            }
+            animNew.Key = keys.ToArray();
+            animNew.EndTime.Value = lastTime;
+            return animNew;
+        }
+        public static string FirstCharToUpper(string input)
+        {
+           return char.ToUpper(input.First()) + input.Substring(1).ToLower();
+        }
+        public static List<EffectParticleAnimation> GetAnimations(InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimation in_Anims)
+        {
+            List<EffectParticleAnimation> animsOut = new List<EffectParticleAnimation>();
+            if (in_Anims.TransX.KeyFrameList.KeyFrame != null)
+            {                
+                animsOut.Add(GetAnimKeyframes(in_Anims.TransX.KeyFrameList, FirstCharToUpper(in_Anims.TransX.CurveType), "Tx"));
+            }
+            if (in_Anims.TransY.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.TransY.KeyFrameList, FirstCharToUpper(in_Anims.TransY.CurveType), "Ty"));
+            }
+            if (in_Anims.TransZ.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.TransZ.KeyFrameList, FirstCharToUpper(in_Anims.TransZ.CurveType), "Tz"));
+            }
+            if (in_Anims.ScaleX.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.ScaleX.KeyFrameList, FirstCharToUpper(in_Anims.ScaleX.CurveType), "Sx"));
+            }
+            if (in_Anims.ScaleY.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.ScaleY.KeyFrameList, FirstCharToUpper(in_Anims.ScaleY.CurveType), "Sy"));
+            }
+            if (in_Anims.ScaleZ.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.ScaleZ.KeyFrameList, FirstCharToUpper(in_Anims.ScaleZ.CurveType), "Sz"));
+            }
+            if (in_Anims.ColorA.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.ColorA.KeyFrameList, FirstCharToUpper(in_Anims.ColorA.CurveType), "ColorA"));
+            }
+            if (in_Anims.ColorR.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.ColorR.KeyFrameList, FirstCharToUpper(in_Anims.ColorR.CurveType), "ColorR"));
+            }
+            if (in_Anims.ColorG.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.ColorG.KeyFrameList, FirstCharToUpper(in_Anims.ColorG.CurveType), "ColorG"));
+            }
+            if (in_Anims.ColorB.KeyFrameList.KeyFrame != null)
+            {
+                animsOut.Add(GetAnimKeyframes(in_Anims.ColorB.KeyFrameList, FirstCharToUpper(in_Anims.ColorB.CurveType), "ColorB"));
+            }
+            return animsOut;
+        }
+        public static Material ConvertMaterial(string path)
+        {
+            Material newGensMat = new Material();
+            InportExportMaterial suMat = new InportExportMaterial();
+            XmlSerializer serializer = new XmlSerializer(typeof(SUC_Converter.InportExportMaterial));
+            using (StreamReader reader = new StreamReader(@path.Replace("\"", "")))
+            {
+                suMat = (InportExportMaterial)(serializer.Deserialize(reader));
+            }
+            newGensMat.Name = suMat.MaterialSaveLoad.materialName;
+            newGensMat.Texture.Value = suMat.MaterialSaveLoad.textureName;
+            newGensMat.Shader.Name = suMat.MaterialSaveLoad.shaderName;
+            newGensMat.BlendMode.Value = suMat.MaterialSaveLoad.blendMode;
+            if(suMat.MaterialSaveLoad.uvDescType != null)
+            {
+                int splitX = int.Parse(suMat.MaterialSaveLoad.uvDescType.Replace("UVDesc_", "")[0].ToString());
+                int splitY = int.Parse(suMat.MaterialSaveLoad.uvDescType.Replace("UVDesc_", "")[2].ToString());
+                newGensMat.Split.U = (byte)splitX;
+                newGensMat.Split.V = (byte)splitY;
+
+            }
+            newGensMat.AddressMode.Value = "Wrap";
+            return newGensMat;
         }
         public static void Run()
         {
@@ -52,6 +151,7 @@ namespace SUC_Converter
             Effect.Color.A = 1;
             List<EffectEmitter> emitters = new List<EffectEmitter>();
             List<EffectParticle> particles = new List<EffectParticle>();
+            List<string> materialNames = new List<string>();
             int index = -1;
             foreach(var emitter in resourceSparkle.EffectSaveLoad.EmitterSaveLoadList)
             {
@@ -90,6 +190,8 @@ namespace SUC_Converter
                 gensEmitter.EmitCondition = new EffectEmitterEmitCondition();
                 gensEmitter.EmitCondition.Value = emitter.EmitCondition;
                 gensEmitter.Type = emitter.EmitterType;
+                
+                
                 switch (emitter.EmitterType)
                 {
                     case "Box":
@@ -123,7 +225,9 @@ namespace SUC_Converter
                 }
 
                 EffectParticle gensParticle = new EffectParticle();
+                
                 var particleSU = emitter.ParticleSaveLoadList.ParticleSaveLoad;
+                
                 gensParticle.Name = particleSU.ParticleName;
                 gensParticle.LifeTime = new EffectParticleLifeTime();
                 gensParticle.LifeTime.Value = particleSU.LifeTime * 60.0f;
@@ -151,6 +255,9 @@ namespace SUC_Converter
                 gensParticle.Color.B = particleSU.Color.B;
                 gensParticle.Color.A = particleSU.Color.A;
 
+                List<EffectParticleAnimation> animations = new List<EffectParticleAnimation>();
+                animations = GetAnimations(particleSU.Animation);
+                gensParticle.Animation = animations.ToArray();
                 gensParticle.GravitationalAccel = new EffectParticleGravitationalAccel();
                 gensParticle.GravitationalAccel.X = particleSU.Gravity.X;
                 gensParticle.GravitationalAccel.Y = particleSU.Gravity.Y;
@@ -204,10 +311,15 @@ namespace SUC_Converter
                 gensParticle.Rotation.Y = particleSU.InitialRotationXYZ.Y;
                 gensParticle.Rotation.Z = particleSU.InitialRotationXYZ.Z;
 
+
                 gensParticle.RotationRandom = new EffectParticleRotationRandom();
                 gensParticle.RotationRandom.X = particleSU.InitialRotationXYZBias.X;
                 gensParticle.RotationRandom.Y = particleSU.InitialRotationXYZBias.Y;
                 gensParticle.RotationRandom.Z = particleSU.InitialRotationXYZBias.Z;
+              
+                gensParticle.MaxCount.Value = emitter.MaxGenerateCount;
+                if (!materialNames.Contains(gensParticle.Material.Value))
+                    materialNames.Add(gensParticle.Material.Value);
                 gensEmitter.Particle = new EffectEmitterParticle();
                 gensEmitter.Particle.Name = gensParticle.Name;
                 index++;
@@ -220,10 +332,36 @@ namespace SUC_Converter
             Effect.Emitter = emitters.ToArray();
             Effect.Particle = particles.ToArray();
             XmlSerializer serializer3 = new XmlSerializer(typeof(Effect));
+            string outputfile = "";
             using (var fileStream = new StringWriter())
             {
                 serializer3.Serialize(fileStream, Effect);
-                Clipboard.SetText(fileStream.ToString());
+                outputfile = fileStream.ToString();
+                outputfile = outputfile.Replace("<Particle>", "");
+                outputfile = outputfile.Replace("</Particle>", "");
+                outputfile = outputfile.Replace("EffectParticle", "Particle");
+                outputfile = outputfile.Replace("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", "");
+            }
+            
+            string path2 = pathSparkle.Replace(".particle", ".gte.xml");
+            File.WriteAllText(@path2, outputfile);
+            foreach(var mat in materialNames)
+            {
+                string dir = Directory.GetParent(pathSparkle).FullName;
+                string output = Path.Combine(dir, mat + ".p-material");
+                var matf = ConvertMaterial(@output);
+                XmlSerializer serializermat = new XmlSerializer(typeof(Material));
+                string outputfilemat = "";
+                using (var fileStream = new StringWriter())
+                {
+                    serializermat.Serialize(fileStream, matf);
+                    outputfilemat = fileStream.ToString();
+                    outputfilemat = outputfilemat.Replace("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", "");
+                    
+                }
+
+                File.WriteAllText(output.Replace(".p-material", ".gtm.xml"), outputfilemat);
+
             }
         }
     }

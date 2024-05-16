@@ -45,8 +45,8 @@ namespace SUC_Converter.Windows
 
         private void button3_Click(object sender, EventArgs e)
         {
-            ParticleConverter.Setup(@"E:\Games\UNLEASHED PREVIEW BUILD\PREVIEW\Sonic\sonic_sliding_kick.particle");
-            ParticleConverter.Run();
+            ParticleConverterWindow form = new ParticleConverterWindow();
+            form.Show();
         }
     }
 }

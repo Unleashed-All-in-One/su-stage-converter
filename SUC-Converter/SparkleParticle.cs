@@ -3649,6 +3649,211 @@ namespace SUC_Converter
         }
     }
 
+    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    public partial class KeyFrameList
+    {
+
+        private KeyFrameListKeyFrame[] keyFrameField;
+
+        public KeyFrameList()
+        {
+            KeyFrame = new List<KeyFrameListKeyFrame>().ToArray();
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("KeyFrame")]
+        public KeyFrameListKeyFrame[] KeyFrame
+        {
+            get
+            {
+                return this.keyFrameField;
+            }
+            set
+            {
+                this.keyFrameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class KeyFrameListKeyFrame
+    {
+
+        private float timeField;
+
+        private float valueField;
+
+        private float valueUpperBiasField;
+
+        private float valueLowerBiasField;
+
+        private float slopeLField;
+
+        private float slopeRField;
+
+        private float slopeLUpperBiasField;
+
+        private float slopeLLowerBiasField;
+
+        private float slopeRUpperBiasField;
+
+        private float slopeRLowerBiasField;
+
+        private bool keyBreakField;
+
+        /// <remarks/>
+        public float Time
+        {
+            get
+            {
+                return this.timeField;
+            }
+            set
+            {
+                this.timeField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float Value
+        {
+            get
+            {
+                return this.valueField;
+            }
+            set
+            {
+                this.valueField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float ValueUpperBias
+        {
+            get
+            {
+                return this.valueUpperBiasField;
+            }
+            set
+            {
+                this.valueUpperBiasField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float ValueLowerBias
+        {
+            get
+            {
+                return this.valueLowerBiasField;
+            }
+            set
+            {
+                this.valueLowerBiasField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float SlopeL
+        {
+            get
+            {
+                return this.slopeLField;
+            }
+            set
+            {
+                this.slopeLField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float SlopeR
+        {
+            get
+            {
+                return this.slopeRField;
+            }
+            set
+            {
+                this.slopeRField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float SlopeLUpperBias
+        {
+            get
+            {
+                return this.slopeLUpperBiasField;
+            }
+            set
+            {
+                this.slopeLUpperBiasField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float SlopeLLowerBias
+        {
+            get
+            {
+                return this.slopeLLowerBiasField;
+            }
+            set
+            {
+                this.slopeLLowerBiasField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float SlopeRUpperBias
+        {
+            get
+            {
+                return this.slopeRUpperBiasField;
+            }
+            set
+            {
+                this.slopeRUpperBiasField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float SlopeRLowerBias
+        {
+            get
+            {
+                return this.slopeRLowerBiasField;
+            }
+            set
+            {
+                this.slopeRLowerBiasField = value;
+            }
+        }
+
+        /// <remarks/>
+        public bool KeyBreak
+        {
+            get
+            {
+                return this.keyBreakField;
+            }
+            set
+            {
+                this.keyBreakField = value;
+            }
+        }
+    }
+
+
     /// <remarks/>
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -3660,7 +3865,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -3689,7 +3894,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -3713,7 +3918,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -3742,7 +3947,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -3766,7 +3971,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -3795,7 +4000,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -3819,7 +4024,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -3848,7 +4053,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -3872,7 +4077,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -3901,7 +4106,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -3925,7 +4130,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -3954,7 +4159,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -3978,7 +4183,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationScaleXKeyFrame[] keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -4006,9 +4211,7 @@ namespace SUC_Converter
             }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("KeyFrame", IsNullable = false)]
-        public InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationScaleXKeyFrame[] KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -4205,7 +4408,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationScaleYKeyFrameList keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -4234,7 +4437,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationScaleYKeyFrameList KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -4454,7 +4657,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationScaleZKeyFrameList keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -4483,7 +4686,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationScaleZKeyFrameList KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -4703,7 +4906,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorRKeyFrameList keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -4732,7 +4935,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorRKeyFrameList KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -4952,7 +5155,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorGKeyFrameList keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -4981,7 +5184,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorGKeyFrameList KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5201,7 +5404,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorBKeyFrameList keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5230,7 +5433,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorBKeyFrameList KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5450,7 +5653,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorAKeyFrame[] keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5478,9 +5681,7 @@ namespace SUC_Converter
             }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("KeyFrame", IsNullable = false)]
-        public InportExportEffectEffectSaveLoadEmitterSaveLoadParticleSaveLoadListParticleSaveLoadAnimationColorAKeyFrame[] KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5677,7 +5878,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5706,7 +5907,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5730,7 +5931,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5759,7 +5960,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5783,7 +5984,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5812,7 +6013,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5836,7 +6037,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5865,7 +6066,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5889,7 +6090,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5918,7 +6119,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5942,7 +6143,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -5971,7 +6172,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -5995,7 +6196,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -6024,7 +6225,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -6048,7 +6249,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -6077,7 +6278,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
@@ -6101,7 +6302,7 @@ namespace SUC_Converter
 
         private string curveTypeField;
 
-        private object keyFrameListField;
+        private KeyFrameList keyFrameListField;
 
         /// <remarks/>
         public object Name
@@ -6130,7 +6331,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public object KeyFrameList
+        public KeyFrameList KeyFrameList
         {
             get
             {
