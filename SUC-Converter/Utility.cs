@@ -91,10 +91,25 @@ namespace SUC_Converter
         public static void evs2xml(string path)
         {
             string path2 = Utility.GetTextWithoutQuotations(path);
-            path2.Insert(0, "\"");
-            path2.Insert(path2.Length, "\"");
+            path2 = path2.Insert(0, "\"");
+            path2 = path2.Insert(path2.Length, "\"");
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = @Path.Combine(ProgramPath, "evsxml.exe");
+            startInfo.Arguments = $" {@path2}";
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.CreateNoWindow = false;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            Process? extractPacked = Process.Start(startInfo);
+            extractPacked.WaitForExit();
+        }
+
+        public static void gte2xml(string path)
+        {
+            string path2 = Utility.AddQuotesIfRequired(Utility.GetTextWithoutQuotations(path));
+            
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = @Path.Combine(ProgramPath, "gtexml.exe");
             startInfo.Arguments = $" {@path2}";
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;

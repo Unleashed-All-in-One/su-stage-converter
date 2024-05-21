@@ -1700,6 +1700,8 @@ namespace SUC_Converter
 
         private string typeField;
 
+        private EffectParticleMeshName meshNameField;
+
         public EffectParticle()
         {            
             LifeTime = new EffectParticleLifeTime();
@@ -1736,10 +1738,24 @@ namespace SUC_Converter
             AlphaScroll = new EffectParticleAlphaScroll();
             AlphaScrollRandom = new EffectParticleAlphaScrollRandom();
             AlphaScrollSpeed = new EffectParticleAlphaScrollSpeed();
-            
+            MeshName = new EffectParticleMeshName();
+
+
             Material = new EffectParticleMaterial();
             
             Flags = new EffectParticleFlags();
+        }
+
+        public EffectParticleMeshName MeshName
+        {
+            get
+            {
+                return this.meshNameField;
+            }
+            set
+            {
+                this.meshNameField = value;
+            }
         }
 
         /// <remarks/>
@@ -2436,6 +2452,28 @@ namespace SUC_Converter
         public static implicit operator EffectParticleLifeTime(float v)
         {
             throw new NotImplementedException();
+        }
+    }
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class EffectParticleMeshName
+    {
+
+        private string valueField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Value
+        {
+            get
+            {
+                return this.valueField;
+            }
+            set
+            {
+                this.valueField = value;
+            }
         }
     }
 

@@ -507,7 +507,7 @@ namespace SUC_Converter
 
         private float generateCountField;
 
-        private ushort particleDataFlagsField;
+        private int particleDataFlagsField;
 
         private bool infiniteField;
 
@@ -594,7 +594,7 @@ namespace SUC_Converter
         }
 
         /// <remarks/>
-        public ushort ParticleDataFlags
+        public int ParticleDataFlags
         {
             get
             {

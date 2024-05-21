@@ -65,7 +65,7 @@
             button3.Name = "button3";
             button3.Size = new Size(115, 44);
             button3.TabIndex = 2;
-            button3.Text = "Test";
+            button3.Text = "Particle Converter";
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
@@ -107,7 +107,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "MainWindow";
-            Text = "SUC-Converter 0.6";
+            Text = "SUC-Converter 0.7";
             Load += MainWindow_Load;
             ResumeLayout(false);
             PerformLayout();
