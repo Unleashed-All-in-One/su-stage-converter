@@ -107,7 +107,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "MainWindow";
-            Text = "SUC-Converter 0.7";
+            Text = "SUC-Converter 0.7.1";
             Load += MainWindow_Load;
             ResumeLayout(false);
             PerformLayout();

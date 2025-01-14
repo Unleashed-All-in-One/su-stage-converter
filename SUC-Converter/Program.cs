@@ -27,7 +27,7 @@ static class Program
     static string m_FolderNewHashtag;
     static string m_FolderNewStage;
 
-    static string m_StageID = "ghz200";
+    public static string m_StageID = "ghz200";
     static List<string> m_ListOriginalFiles = new List<string>();
     static List<string> m_ListTempFolders= new List<string>();
 
@@ -84,9 +84,10 @@ static class Program
             {
                 if (!File.Exists(firstFileOutputPath))
                 {
-                    if (File.Exists(pathToFirst))
+                    if (File.Exists(pathToFirst.Replace("\"", "")))
                     {
-                        File.Copy(pathToFirst, firstFileOutputPath);
+                        firstFileOutputPath = firstFileOutputPath.Replace("\"", "");
+                        File.Copy(@pathToFirst.Replace("\"", ""), @firstFileOutputPath);
                         Utility.IsFileLocked(new FileInfo(@firstFileOutputPath));
                         m_ListOriginalFiles.Add(firstFileOutputPath);
                         Utility.xbdecompress(@firstFileOutputPath);

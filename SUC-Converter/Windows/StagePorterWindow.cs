@@ -45,6 +45,13 @@ namespace SUC_Converter.Windows
                 return PathStagePfdAdd.Text;
             }
         }
+        string stageID
+        {
+            get
+            {
+                return textBox1.Text;
+            }
+        }
         private DarkModeCS DM = null;
         public StagePorterWindow()
         {
@@ -76,6 +83,7 @@ namespace SUC_Converter.Windows
                 Program.pathToSetArchive = Utility.AddQuotesIfRequired(pathToStageArchiveHashtag);
                 Program.pathToStagePfd = Utility.AddQuotesIfRequired(pathToPfd);
                 Program.pathToStagePfdAdd = Utility.AddQuotesIfRequired(pathToPfdAdd);
+                Program.m_StageID = stageID;
                 Program.CleanupLastTry();
                 Program.CopyArchivesToProgram();
                 Program.MoveFilesToCorrectLocations();
