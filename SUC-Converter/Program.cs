@@ -8,6 +8,8 @@ using SUC_Converter;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 using SUC_Converter.Windows;
+using System.Xml;
+using System.Xml.Linq;
 
 static class Program
 {
@@ -104,7 +106,7 @@ static class Program
     {
         System.Windows.Forms.Application.EnableVisualStyles();
         System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-        System.Windows.Forms.Application.Run(new MainWindow());
+        System.Windows.Forms.Application.Run(new CutscenePorterWindow());
     }
     public static void Startup()
     {
@@ -280,16 +282,16 @@ static class Program
 
 
 
-        CleanupLastTry();
-        CopyArchivesToProgram();
-        MoveFilesToCorrectLocations();
-        MoveStageToBBStyleFolder();
-        MakeNewHashtagFolderContents();
-        UncompressPFD();
-        MatFixer();
-        RepackEverything();
-        Cleanup();
-        Utility.EndScreen("Stage has been converted successfully!", "NOTE: Now that you've run this, you need to go in GLVL 0.5.7 (NOT SVN), do File > Fix all materials in folder and pick the packed stage folder, then open the stage and repack with visibility tree ticked off.\r\nDo note that Spagonia levels may have a \"Stage_old\" XML which is actually the Stage xml, copy the contents of the _old to the regular one.\r\nPress any key to close, or R to go back to the start...\r\n", Utility.FilesDirectory);
+       // CleanupLastTry();
+       // CopyArchivesToProgram();
+       // RearrangeFiles();
+       // MoveStageToBBStyleFolder();
+       // MakeNewHashtagFolderContentsGens();
+       // UncompressPFD();
+       // MatFixer();
+       // RepackEverything();
+       // Cleanup();
+       // Utility.EndScreen("Stage has been converted successfully!", "NOTE: Now that you've run this, you need to go in GLVL 0.5.7 (NOT SVN), do File > Fix all materials in folder and pick the packed stage folder, then open the stage and repack with visibility tree ticked off.\r\nDo note that Spagonia levels may have a \"Stage_old\" XML which is actually the Stage xml, copy the contents of the _old to the regular one.\r\nPress any key to close, or R to go back to the start...\r\n", Utility.FilesDirectory);
     }
 
     public static void MatFixer()
@@ -354,7 +356,7 @@ static class Program
         }
     }
 
-    public static void RepackEverything()
+    public static void RepackEverything(bool in_ToGenerations)
     {
         OutputLog.Log($"Repacking pfd...");
         Utility.pfdPack(m_FolderStagePFD);
@@ -367,9 +369,26 @@ static class Program
 
          
         OutputLog.Log($"Moving pfi to {m_FolderNewStage}...");
-        File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfi"), Path.Combine(m_FolderNewStage, "Stage.pfi"));
+        if(in_ToGenerations)
+        {
+            File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfi"), Path.Combine(m_FolderNewStage, "Stage.pfi"));
+        }
+        else
+        {
+            File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfi"), Path.Combine(m_FolderHashtag, "Stage.pfi"));
+        }
         if (File.Exists(Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")))
-            File.Move(Utility.AddQuotesIfRequired(@Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")), Utility.AddQuotesIfRequired(@Path.Combine(m_FolderNewStage, "Stage-Add.pfi")));
+        {
+            if(in_ToGenerations)
+            {
+                File.Move(Utility.AddQuotesIfRequired(@Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")), Utility.AddQuotesIfRequired(@Path.Combine(m_FolderNewStage, "Stage-Add.pfi")));
+            }
+            else
+            {
+
+                File.Move(Utility.AddQuotesIfRequired(@Path.Combine(Utility.FilesDirectory, "Stage-Add.pfi")), Utility.AddQuotesIfRequired(@Path.Combine(m_FolderHashtag, "Stage-Add.pfi")));
+            }
+        }
 
         OutputLog.Log($"Moving pfd to Packed...");
         File.Move(Path.Combine(Utility.FilesDirectory, "Stage.pfd"), Path.Combine(Directory.GetParent(m_FolderNewStage).FullName, "Stage.pfd"));
@@ -392,7 +411,7 @@ static class Program
         }
     }
 
-    public static void MakeNewHashtagFolderContents()
+    public static void MakeNewHashtagFolderContentsGens()
     {
         //awful, i just didnt want to rewrite this part of the old code since its the only thing that actually worked
         string XMLStart = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n<Stage xsi:noNamespaceSchemaLocation=\"http://web/chao/project/swa/schema/Stage.stg.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
@@ -497,6 +516,162 @@ static class Program
             Thread.Sleep(200);
             File.Move(f.FullName, Path.Combine(m_FolderNewHashtag, f.Name));
         }
+    
+    }
+
+    public static void MakeNewHashtagFolderContentsSWA()
+    {
+        XmlDocument stageFile = new XmlDocument();
+        stageFile.Load(Path.Combine(m_FolderHashtag, "Stage.stg.xml").Replace("\"", ""));
+
+        XmlDocument terrainStgFile = new XmlDocument();
+        terrainStgFile.Load(Path.Combine(m_FolderHashtag, "Terrain.stg.xml").Replace("\"", ""));
+
+        // Get all child nodes of <Stage> in terrainDoc
+        XmlNode terrainStageNode = terrainStgFile.SelectSingleNode("/Stage");
+
+        // Get the <Stage> node from stageDoc
+        XmlNode stageNode = stageFile.SelectSingleNode("/Stage");
+
+        // Import and append each child of terrainStageNode to stageNode
+        foreach (XmlNode child in terrainStageNode.ChildNodes)
+        {
+            XmlNode importedNode = stageFile.ImportNode(child, true);
+            stageNode.AppendChild(importedNode);
+        }
+
+        stageFile.Save(Path.Combine(m_FolderHashtag, "Stage.stg.xml").Replace("\"", ""));
+
+
+        ////awful, i just didnt want to rewrite this part of the old code since its the only thing that actually worked
+        //string XMLStart = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n<Stage xsi:noNamespaceSchemaLocation=\"http://web/chao/project/swa/schema/Stage.stg.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+        //string XMLEnd = "\r\n</Stage>";
+        //// ^
+        //string newTerrainFile = "";
+        //string newInstancerFile = "";
+        //bool includeInTerrain = false;
+        //bool includeInInstancer = false;
+        //bool setData = false;
+        //
+        //string stagePath = Path.Combine(m_FolderHashtag, "Stage.stg.xml").Replace("\"", "");
+        //string[] stageXMLContents = File.ReadAllLines(stagePath);
+        //List<string> newStageXML = stageXMLContents.ToList();
+        //
+        //foreach (var stageString in stageXMLContents)
+        //{
+        //    if (stageString.Contains("<Evil>"))
+        //        stageString.Replace("<Evil>", "<Sonic>");
+        //
+        //    if (stageString.Contains("</Evil>"))
+        //        stageString.Replace("</Evil>", "</Sonic>");
+        //
+        //    if (stageString.Contains("<Terrain>"))
+        //    {
+        //        includeInTerrain = true;
+        //    }
+        //    else if (stageString.Contains("</Sky>"))
+        //    {
+        //        includeInTerrain = false;
+        //        newTerrainFile += $"\n{stageString}";
+        //        newStageXML.Remove(stageString);
+        //    }
+        //
+        //    if (stageString.Contains("<SetData>"))
+        //    {
+        //        setData = true;
+        //    }
+        //    else if (stageString.Contains("</SetData>"))
+        //    {
+        //        setData = false;
+        //        newStageXML.Remove(stageString);
+        //    }
+        //    if (stageString.Contains("<Instancer>"))
+        //    {
+        //        includeInInstancer = true;
+        //    }
+        //    else if (stageString.Contains("</Instancer>"))
+        //    {
+        //        OutputLog.Log($"Deleted \"{stageString}\"");
+        //        includeInInstancer = false;
+        //        newTerrainFile += $"\n{stageString}";
+        //        newStageXML.Remove(stageString);
+        //    }
+        //
+        //    if (setData)
+        //        newStageXML.Remove(stageString);
+        //
+        //    if (includeInTerrain)
+        //    {
+        //        OutputLog.Log($"Deleted \"{stageString}\"");
+        //        newTerrainFile += $"\n{stageString}";
+        //        newStageXML.Remove(stageString);
+        //    }
+        //    if (includeInInstancer)
+        //    {
+        //        OutputLog.Log($"Deleted \"{stageString}\"");
+        //        newInstancerFile += $"\n{stageString}";
+        //        newStageXML.Remove(stageString);
+        //
+        //    }
+        //}
+        //newTerrainFile = newTerrainFile.Insert(0, XMLStart);
+        //newTerrainFile = newTerrainFile.Insert(newTerrainFile.Length, XMLEnd);
+        //
+        //newInstancerFile = newInstancerFile.Insert(0, XMLStart);
+        //newInstancerFile = newInstancerFile.Insert(newInstancerFile.Length, XMLEnd);
+
+        //File.Delete(Path.Combine(m_FolderHashtag, "Terrain.prm.xml").Replace("\"", ""));
+        //File.WriteAllText(Path.Combine(m_FolderHashtag, "Terrain.stg.xml").Replace("\"", ""), newTerrainFile);
+        //File.WriteAllText(Path.Combine(m_FolderHashtag, "Instancer.stg.xml").Replace("\"", ""), newInstancerFile);
+        //File.WriteAllText(Path.Combine(m_FolderHashtag, "Stage.stg.xml").Replace("\"", ""), string.Join("\n", newStageXML.ToArray()));
+
+        OutputLog.Log("IT'S REALLY IMPORTANT THAT YOU ENSURE THE BGM CSB EXISTS! If it doesn't, the game will crash.", OutputLog.Severity.Warning);
+        //replace every xml with the unleashed ones except for stage.stg
+
+        IEnumerable<FileInfo> files = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".xml");
+        foreach (var f in files)
+        {
+            //if (f.Name.Contains("Stage.stg"))
+            //    continue;
+            if (File.Exists(Path.Combine(m_FolderNewHashtag, f.Name)))
+                File.Delete(Path.Combine(m_FolderNewHashtag, f.Name));
+            File.Move(f.FullName, Path.Combine(m_FolderNewHashtag, f.Name));
+        }
+
+        IEnumerable<FileInfo> filesHKX = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".hkx");
+        foreach (var f in filesHKX)
+        {
+            OutputLog.Log($" Converting {f.Name} from hk_2010.2.0-r1 to Havok-5.5.0-r1...");
+            Utility.Hk2010To5(f.FullName);
+            Thread.Sleep(200);
+            File.Move(f.FullName, Path.Combine(m_FolderNewHashtag, f.Name));
+        }
+
+    }
+    public static void MoveStageToSWAStyleFolder()
+    {
+        var newStageFolderPacked = Path.Combine(Utility.FilesDirectory, m_StageID);
+        if (!Directory.Exists(newStageFolderPacked))
+            Directory.CreateDirectory(newStageFolderPacked);
+        var stageFilesExceptHKX = Directory.GetFiles(m_FolderStage).Where(name => !name.EndsWith(".hkx", StringComparison.OrdinalIgnoreCase));
+        var stageFilesHKX = Directory.GetFiles(m_FolderStage).Where(name => name.EndsWith(".hkx", StringComparison.OrdinalIgnoreCase));
+        //Move all files that arent HKXs to the new stage folder
+        OutputLog.Log($"Moving files from unpacked archive folder to {newStageFolderPacked}...");
+        foreach (var f in stageFilesExceptHKX)
+        {
+            string newPath = Path.Combine(newStageFolderPacked, Path.GetFileName(f));
+            File.Move(f, newPath);
+        }
+        //Convert all leftover HKX files and move them as well
+        //foreach (var f in stageFilesHKX)
+        //{
+        //    OutputLog.Log($"Converting {Path.GetFileName(f)} from Havok-5.5.0-r1 to hk_2010.2.0-r1...");
+        //    Utility.hkxconverter(f);
+        //    Thread.Sleep(100);
+        //    string newPath = Path.Combine(newStageFolderPacked, Path.GetFileName(f));
+        //    File.Move(f, newPath);
+        //}
+        m_FolderNewStage = newStageFolderPacked;
     }
     public static void MoveStageToBBStyleFolder()
     {
@@ -522,20 +697,34 @@ static class Program
         }
         m_FolderNewStage = newStageFolderPacked;
     }
-    public static void MoveFilesToCorrectLocations()
+    public static void RearrangeFiles(bool in_ToGenerations = true)
     {
         m_FolderNewHashtag = @Path.Combine(Utility.FilesDirectory, $"#{m_StageID}");
         OutputLog.Log("Cloning Set archive from template...");
-        Utility.CloneDirectory(@Path.Combine(Utility.ProgramPath, "TemplateHashtag"), m_FolderNewHashtag); 
-        //Copy files from #stage to stage
-        var fromHashtag_toStage = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".gil", ".gi-texture-group-info", ".light", ".light-list", ".tbst", ".terrain", ".terrain-group");
-        foreach(var f in fromHashtag_toStage)
+        if (in_ToGenerations)
         {
-            OutputLog.Log($" Copying \"{f.Name}\" to stage archive...");
-            string newLoc = Path.Combine(Utility.FilesDirectory, m_FolderStage, f.Name);
-            File.Move(f.FullName, newLoc);
+            Utility.CloneDirectory(@Path.Combine(Utility.ProgramPath, "TemplateHashtag"), m_FolderNewHashtag);
+            //Copy files from #stage to stage
+            var fromHashtag_toStage = Utility.GetFilesByExtensions(new DirectoryInfo(m_FolderHashtag), ".gil", ".gi-texture-group-info", ".light", ".light-list", ".tbst", ".terrain", ".terrain-group");
+            foreach (var f in fromHashtag_toStage)
+            {
+                OutputLog.Log($" Copying \"{f.Name}\" to stage archive...");
+                string newLoc = Path.Combine(Utility.FilesDirectory, m_FolderStage, f.Name);
+                File.Move(f.FullName, newLoc);
+            }
         }
-
+        else
+        {
+            Utility.CloneDirectory(@Path.Combine(Utility.ProgramPath, "TemplateHashtagSWA"), m_FolderNewHashtag);
+            //Copy files from stage to #stage
+            string newLoc = Path.Combine(Utility.FilesDirectory, m_FolderStage);
+            var fromHashtag_toStage = Utility.GetFilesByExtensions(new DirectoryInfo(newLoc), ".gil", ".gi-texture-group-info", ".light", ".light-list", ".tbst", ".terrain", ".terrain-group");
+            foreach (var f in fromHashtag_toStage)
+            {
+                OutputLog.Log($" [UN]Copying \"{f.Name}\" to #stage archive...");
+                File.Move(f.FullName, Path.Combine(m_FolderHashtag, f.Name));
+            }
+        }
         Utility.CreateDirectoryIfNotExist(Path.Combine(Utility.FilesDirectory, "Packed"));
         Utility.CreateDirectoryIfNotExist(Path.Combine(Utility.FilesDirectory, "Packed", $"{m_StageID}"));
         //This'll become an archive

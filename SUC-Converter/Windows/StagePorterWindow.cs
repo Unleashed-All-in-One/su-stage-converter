@@ -74,6 +74,26 @@ namespace SUC_Converter.Windows
             Thread myThread = new Thread(new ThreadStart(DoSomething));
             myThread.Start();
         }
+        void ConvertUnleashedToGens()
+        {
+            Program.RearrangeFiles();
+            Program.MoveStageToBBStyleFolder();
+            Program.MakeNewHashtagFolderContentsGens();
+            Program.UncompressPFD();
+            Program.MatFixer();
+            Program.RepackEverything(true);
+            Program.Cleanup();
+        }
+        void ConvertGensToUnleashed()
+        {
+            Program.RearrangeFiles(false);
+            Program.MoveStageToSWAStyleFolder();
+            Program.MakeNewHashtagFolderContentsSWA();
+            Program.UncompressPFD();
+            //Program.MatFixer();
+            Program.RepackEverything(false);
+            Program.Cleanup();
+        }
         private void DoSomething()
         {
             isRunning = true;
@@ -83,16 +103,11 @@ namespace SUC_Converter.Windows
                 Program.pathToSetArchive = Utility.AddQuotesIfRequired(pathToStageArchiveHashtag);
                 Program.pathToStagePfd = Utility.AddQuotesIfRequired(pathToPfd);
                 Program.pathToStagePfdAdd = Utility.AddQuotesIfRequired(pathToPfdAdd);
-                Program.m_StageID = stageID;
                 Program.CleanupLastTry();
                 Program.CopyArchivesToProgram();
-                Program.MoveFilesToCorrectLocations();
-                Program.MoveStageToBBStyleFolder();
-                Program.MakeNewHashtagFolderContents();
-                Program.UncompressPFD();
-                Program.MatFixer();
-                Program.RepackEverything();
-                Program.Cleanup();
+                Program.m_StageID = stageID;
+                //ConvertUnleashedToGens();
+                ConvertGensToUnleashed();
                 OutputLog.Log("Port has been completed. You'll now have to repack the terrain geometry in GLVL.");
                 SystemSounds.Exclamation.Play();
             }

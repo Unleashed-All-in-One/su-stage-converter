@@ -128,6 +128,37 @@ namespace SUC_Converter
             startInfo.CreateNoWindow = true;
             Process? extractPacked = Process.Start(startInfo);
         }
+        public static void Hk2010To5(string path)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = @Path.Combine(ProgramPath, "collision2fbx.exe");
+            startInfo.Arguments = $"\"{path}\"";
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.CreateNoWindow = false;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            Process? extractPacked = Process.Start(startInfo);
+
+            //assetcc2 --rules4101 output/%%f asset-cced/%%f
+
+            extractPacked.WaitForExit();
+            extractPacked.WaitForExit();
+
+            string @path2 = $"\"{Path.ChangeExtension(@path, ".fbx")}\"";
+            @path2 = @path2.Replace(".skl", "");
+            @path2 = @path2.Replace(".phy", "");
+            ProcessStartInfo startInfo2 = new ProcessStartInfo();
+            startInfo2.FileName = @Path.Combine(ProgramPath, "fbx2hkx.exe");
+            startInfo2.Arguments = @path2;
+            startInfo2.UseShellExecute = false;
+            startInfo2.RedirectStandardOutput = true;
+            startInfo2.CreateNoWindow = false;
+            startInfo2.WindowStyle = ProcessWindowStyle.Hidden;
+            Process? extractPacked2 = Process.Start(startInfo2);
+            extractPacked2.WaitForExit();
+
+        }
         public static void hkxconverter(string path)
         {
             var tempPath = Directory.GetParent(path).FullName;
